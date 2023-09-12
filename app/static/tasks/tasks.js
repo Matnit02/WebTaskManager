@@ -17,6 +17,11 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
+    initializeTaskSorting();
+    initializeSubtaskSorting();
+});
+
+function initializeTaskSorting() {
     $(".panel-body").sortable({
         connectWith: ".panel-body",
         start: function (event, ui) {
@@ -48,9 +53,9 @@ $(document).ready(function () {
             });
         }
     });
-});
+}
 
-$(document).ready(function () {
+function initializeSubtaskSorting() {
     $(".subtask-list").sortable({
         connectWith: ".subtask-list",
         update: function (event, ui) {
@@ -58,7 +63,7 @@ $(document).ready(function () {
             $.post('/update-order', {order: subtaskOrder, subtask: true});
         }
     });
-});
+}
 
 $(document).ready(function () {
     $('#addSubtaskBtn').click(function () {
@@ -126,7 +131,7 @@ $(document).ready(function () {
     var socket = io.connect('http://' + document.domain + ':' + location.port);
 
     socket.on('new_task_added', function (data) {
-        var $task = $('<div>').addClass('task').attr({'draggable': true, 'id': data.task_id});
+        var $task = $('<div>').addClass('task').attr({'draggable': true, 'id': data.task_id, 'data-task-id': data.task_id});
         $('<div>').addClass('btn btn-sm pull-right collapse-btn')
             .attr({
                 'data-bs-toggle': 'collapse',
@@ -148,7 +153,8 @@ $(document).ready(function () {
         data.children.forEach(function (subtask) {
             var $subtaskItem = $('<li>').addClass('subtask-list-item').attr({
                 'draggable': true,
-                'id': subtask.id
+                'id': subtask.id,
+                'data-task-id': subtask.id
             }).appendTo($subtaskList);
             var $subtaskDiv = $('<div>').addClass('subtask').appendTo($subtaskItem);
             $('<input>').addClass('form-check-input').attr({
@@ -170,13 +176,15 @@ $(document).ready(function () {
                 .html('<p class="subtask-text text">' + subtask.description + '</p>')
                 .appendTo($subtaskDiv);
         });
+        initializeTaskSorting();
+        initializeSubtaskSorting();
     });
 });
 
 $(document).ready(function () {
     $('#rm-button-toggled').change(function () {
         if ($(this).is(':checked')) {
-            $('.task').on('click', function (e) {
+            $(document).on('click', '.task', function (e) {
                 var collapseBtn = $(this).find('.collapse-btn');
                 if (collapseBtn.attr('aria-expanded') === "false") {
                     var taskId = $(this).attr('data-task-id');
@@ -189,7 +197,7 @@ $(document).ready(function () {
                 }
             });
 
-            $('.subtask-list-item').on('click', function (e) {
+            $(document).on('click', '.subtask-list-item', function (e) {
                 var parentCollapseBtn = $(this).closest('.task').find('.collapse-btn');
                 if (parentCollapseBtn.attr('aria-expanded') === "true") {
                     var taskId = $(this).attr('data-task-id');
@@ -203,8 +211,8 @@ $(document).ready(function () {
                 }
             });
         } else {
-            $('.task').off('click');
-            $('.subtask-list-item').off('click');
+            $(document).off('click', '.task');
+            $(document).off('click', '.subtask-list-item');
         }
     });
 });
