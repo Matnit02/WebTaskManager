@@ -168,8 +168,6 @@ def add_user_to_project():
     email = request.form.get('email').lower()
     project_id = session.get('project_id')
 
-    print("TEST")
-    print(email)
     if not email:
         return jsonify({"status": "error", "message": "Please state user's email"}), 400
 
@@ -202,3 +200,60 @@ def check_user_validity():
 
     user_has_project = any(project.id == project_id for project in user.projects)
     return jsonify({"status": "active" if user_has_project else "removed"})
+
+@tasks.route('/update-task-status', methods=['POST'])
+def update_task_status():
+    task_id = request.form.get('task_id')
+    finished = request.form.get('finished') == 'true'
+
+    try:
+        task = Task.query.get(task_id)
+        if not task:
+            return jsonify(status='error', message='Task not found!'), 404
+
+        task.finished = finished
+        db.session.commit()
+        socketio.emit('task_status_updated', {'task_id': task_id, 'finished': finished})
+        return jsonify(status='success', message='Task updated successfully!')
+
+    except Exception as e:
+        return jsonify(status='error', message='Error updating task: ' + str(e)), 500
+
+
+@tasks.route('/mark-all-completed', methods=['POST'])
+def mark_all_completed():
+    task_id = request.form.get('task_id')
+
+    if not task_id:
+        return jsonify({'status': 'error', 'message': 'Task ID not provided'}), 400
+
+    task = Task.query.get(task_id)
+    if not task:
+        return jsonify({'status': 'error', 'message': 'Task not found'}), 404
+
+    task.finished = True
+
+    for subtask in task.children:
+        subtask.finished = True
+
+    db.session.commit()
+    socketio.emit('task_moved_to_completed', {'task_id': task_id})
+
+    return jsonify({'status': 'success', 'message': 'Task and subtasks marked as finished'}), 200
+
+@tasks.route('/mark-task-unfinished', methods=['POST'])
+def mark_task_unfinished():
+    task_id = request.form.get('task_id')
+
+    if not task_id:
+        return jsonify(status='error', message='Task ID is required')
+
+    task = Task.query.get(task_id)
+
+    if not task:
+        return jsonify(status='error', message='Task not found')
+
+    task.finished = False
+    db.session.commit()
+
+    return jsonify(status='success', message='Task marked as unfinished')

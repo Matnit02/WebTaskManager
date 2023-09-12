@@ -12,7 +12,7 @@ class Task(db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
     deadline = db.Column(db.DateTime, default=datetime.utcnow)
     position = db.Column(db.Integer, nullable=False)
-    expanded = db.Column(db.Boolean, default=False)
+    finished = db.Column(db.Boolean, default=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('task.id'))
     children = db.relationship('Task', backref=db.backref('parent', remote_side=[id]), order_by='Task.position')
 

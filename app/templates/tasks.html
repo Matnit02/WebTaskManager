@@ -150,9 +150,11 @@
                                                 <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
                                                     data-task-id="{{ subtask.id }}">
                                                     <div class="subtask">
-                                                        <input class="form-check-input" type="checkbox"
-                                                               id="subtask-{{ subtask.id }}-checkbox">
-                                                        <label class="form-check-label" for="subtask001-checkbox">
+                                                        <input class="form-check-input" value="" type="checkbox"
+                                                               id="subtask-{{ subtask.id }}-checkbox"
+                                                                {% if subtask.finished %} checked {% endif %}>
+                                                        <label class="form-check-label"
+                                                               for="subtask-{{ subtask.id }}-checkbox">
                                                             {{ subtask.task_title }}
                                                         </label>
                                                         <div class="btn btn-sm pull-right collapse-btn"
@@ -205,9 +207,11 @@
                                                 <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
                                                     data-task-id="{{ subtask.id }}">
                                                     <div class="subtask">
-                                                        <input class="form-check-input" type="checkbox"
-                                                               id="subtask-{{ subtask.id }}-checkbox">
-                                                        <label class="form-check-label" for="subtask001-checkbox">
+                                                        <input class="form-check-input" value="" type="checkbox"
+                                                               id="subtask-{{ subtask.id }}-checkbox"
+                                                                {% if subtask.finished %} checked {% endif %}>
+                                                        <label class="form-check-label"
+                                                               for="subtask-{{ subtask.id }}-checkbox">
                                                             {{ subtask.task_title }}
                                                         </label>
                                                         <div class="btn btn-sm pull-right collapse-btn"
@@ -260,9 +264,11 @@
                                                 <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
                                                     data-task-id="{{ subtask.id }}">
                                                     <div class="subtask">
-                                                        <input class="form-check-input" type="checkbox"
-                                                               id="subtask-{{ subtask.id }}-checkbox">
-                                                        <label class="form-check-label" for="subtask001-checkbox">
+                                                        <input class="form-check-input" value="" type="checkbox"
+                                                               id="subtask-{{ subtask.id }}-checkbox"
+                                                                {% if subtask.finished %} checked {% endif %}>
+                                                        <label class="form-check-label"
+                                                               for="subtask-{{ subtask.id }}-checkbox">
                                                             {{ subtask.task_title }}
                                                         </label>
                                                         <div class="btn btn-sm pull-right collapse-btn"
@@ -314,9 +320,11 @@
                                                 <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
                                                     data-task-id="{{ subtask.id }}">
                                                     <div class="subtask">
-                                                        <input class="form-check-input" type="checkbox"
-                                                               id="subtask-{{ subtask.id }}-checkbox">
-                                                        <label class="form-check-label" for="subtask001-checkbox">
+                                                        <input class="form-check-input" value="" type="checkbox"
+                                                               id="subtask-{{ subtask.id }}-checkbox"
+                                                                {% if subtask.finished %} checked {% endif %}>
+                                                        <label class="form-check-label"
+                                                               for="subtask-{{ subtask.id }}-checkbox">
                                                             {{ subtask.task_title }}
                                                         </label>
                                                         <div class="btn btn-sm pull-right collapse-btn"
@@ -369,9 +377,11 @@
                                                 <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
                                                     data-task-id="{{ subtask.id }}">
                                                     <div class="subtask">
-                                                        <input class="form-check-input" type="checkbox"
-                                                               id="subtask-{{ subtask.id }}-checkbox">
-                                                        <label class="form-check-label" for="subtask001-checkbox">
+                                                        <input class="form-check-input" value="" type="checkbox"
+                                                               id="subtask-{{ subtask.id }}-checkbox"
+                                                                {% if subtask.finished %} checked {% endif %}>
+                                                        <label class="form-check-label"
+                                                               for="subtask-{{ subtask.id }}-checkbox">
                                                             {{ subtask.task_title }}
                                                         </label>
                                                         <div class="btn btn-sm pull-right collapse-btn"

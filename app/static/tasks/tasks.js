@@ -51,6 +51,14 @@ function initializeTaskSorting() {
                     panel_id: panelId
                 });
             });
+
+            if (newPanelId === "completed") {
+                markTaskAndSubtasksAsCompleted(itemId);
+            }
+
+            if (ui.item.startPanelId === "completed" && newPanelId !== "completed") {
+                markTaskAsUnfinished(itemId);
+            }
         }
     });
 }
@@ -61,6 +69,30 @@ function initializeSubtaskSorting() {
         update: function (event, ui) {
             var subtaskOrder = $(this).sortable('toArray');
             $.post('/update-order', {order: subtaskOrder, subtask: true});
+        }
+    });
+}
+
+function markTaskAndSubtasksAsCompleted(taskId) {
+    $.post('/mark-all-completed', { task_id: taskId })
+    .done(function(response) {
+        if (response.status == 'success') {
+            toastr.success("Task and subtasks marked as completed.");
+
+            $(`div[data-task-id=${taskId}]`).find('input[type="checkbox"]').prop('checked', true);
+        } else {
+            toastr.error("Failed to mark tasks as completed.");
+        }
+    });
+}
+
+function markTaskAsUnfinished(taskId) {
+    $.post('/mark-task-unfinished', { task_id: taskId })
+    .done(function(response) {
+        if (response.status == 'success') {
+            toastr.success("Task marked as unfinished.");
+        } else {
+            toastr.error("Failed to mark task as unfinished.");
         }
     });
 }
@@ -131,7 +163,11 @@ $(document).ready(function () {
     var socket = io.connect('http://' + document.domain + ':' + location.port);
 
     socket.on('new_task_added', function (data) {
-        var $task = $('<div>').addClass('task').attr({'draggable': true, 'id': data.task_id, 'data-task-id': data.task_id});
+        var $task = $('<div>').addClass('task').attr({
+            'draggable': true,
+            'id': data.task_id,
+            'data-task-id': data.task_id
+        });
         $('<div>').addClass('btn btn-sm pull-right collapse-btn')
             .attr({
                 'data-bs-toggle': 'collapse',
@@ -342,10 +378,37 @@ function checkUserStatus() {
     $.ajax({
         url: '/check_user_status',
         type: 'GET',
-        success: function(response) {
+        success: function (response) {
             if (response.status === 'removed') {
                 window.location.href = '/projects';
             }
         }
     });
 }
+
+$(document).ready(function () {
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    socket.on('task_status_updated', function (data) {
+        var checkbox = document.getElementById('subtask-' + data.task_id + '-checkbox');
+        if (checkbox) {
+            checkbox.checked = data.finished;
+        }
+    });
+
+    $('body').on('change', '.form-check-input', function() {
+        var taskId = $(this).closest('.subtask-list-item').attr('data-task-id');
+        var finished = $(this).prop('checked');
+        $.post('/update-task-status', {task_id: taskId, finished: finished});
+    });
+});
+
+$(document).ready(function () {
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    socket.on('task_moved_to_completed', function (data) {
+        var taskId = data.task_id;
+
+        $(`div[data-task-id=${taskId}]`).find('input[type="checkbox"]').prop('checked', true);
+    });
+});
