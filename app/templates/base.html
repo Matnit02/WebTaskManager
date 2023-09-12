@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> {{ project_name }} - {% block title %} {% endblock %} </title>
+    <!-- My css for this template-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='base/base.css') }}">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='base/base.js') }}"></script>
+    {% block css %}{% endblock %}
+    {% block script %}{% endblock %}
+</head>
+
+<body>
+<main>
+    <div class="row">
+        <div class="col-1 sidebar">
+            <div class="d-flex flex-column flex-shrink-0 text-center min-vh-100" style="width: 5rem;">
+                <a class="d-block p-3 link-dark text-decoration-none border-bottom" data-bs-placement="right">
+                    <svg class="bi" width="40" height="32">
+                        <use xlink:href="#temp"/>
+                    </svg>
+                    <span class="visually-hidden">Icon-only</span>
+                </a>
+                <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+                    <li class="nav-item">
+                        <a href="/projects" class="nav-link py-3 border-bottom" title="Choose the project" data-bs-toggle="tooltip"
+                           data-bs-placement="right">
+                            <svg class="bi" width="24" height="24" role="img" aria-label="Choose the project">
+                                <use xlink:href="#temp"/>
+                            </svg>
+                        </a>
+{#                        <a href="/base" class="nav-link py-3 border-bottom" aria-current="page"#}
+{#                           title="Choose the project"#}
+{#                           data-bs-toggle="collapse" data-bs-target="#list-projects" aria-expanded="false"#}
+{#                           data-bs-placement="right">#}
+{#                            <svg class="bi" width="24" height="24" role="img" aria-label="Choose the project">#}
+{#                                <use xlink:href="#Projects-down" id="nav-item-icon"/>#}
+{#                            </svg>#}
+{#                        </a>#}
+{#                        <div id="list-projects" class="collapse">#}
+{#                            <ul class="list-group">#}
+{#                                <li class="list-group-project">#}
+{#                                    <a href="/base" class="nav-link py-3 border-bottom" title="Project1"#}
+{#                                       data-bs-toggle="tooltip"#}
+{#                                       data-bs-placement="right">#}
+{#                                        <svg class="bi" width="24" height="24" role="img" aria-label="Project1">#}
+{#                                            <use xlink:href="#temp"/>#}
+{#                                        </svg>#}
+{#                                    </a>#}
+{#                                </li>#}
+{#                                <li class="list-group-project">#}
+{#                                    <a href="/base" class="nav-link py-3 border-bottom" title="Project2"#}
+{#                                       data-bs-toggle="tooltip"#}
+{#                                       data-bs-placement="right">#}
+{#                                        <svg class="bi" width="24" height="24" role="img" aria-label="Project2">#}
+{#                                            <use xlink:href="#temp"/>#}
+{#                                        </svg>#}
+{#                                    </a>#}
+{#                                </li>#}
+{#                                <li class="list-group-project">#}
+{#                                    <a href="/base" class="nav-link py-3 border-bottom" title="Project3"#}
+{#                                       data-bs-toggle="tooltip"#}
+{#                                       data-bs-placement="right">#}
+{#                                        <svg class="bi" width="24" height="24" role="img" aria-label="Project3">#}
+{#                                            <use xlink:href="#temp"/>#}
+{#                                        </svg>#}
+{#                                    </a>#}
+{#                                </li>#}
+{#                                <li class="list-group-project">#}
+{#                                    <a href="/base" class="nav-link py-3 border-bottom text-decoration-none link-light"#}
+{#                                       title="New project"#}
+{#                                       data-bs-toggle="tooltip" data-bs-placement="right">#}
+{#                                        New project#}
+{#                                    </a>#}
+{#                                </li>#}
+{#                            </ul>#}
+{#                        </div>#}
+                    </li>
+                    <li>
+                        <a href="/base" class="nav-link py-3 border-bottom" title="Schedule" data-bs-toggle="tooltip"
+                           data-bs-placement="right">
+                            <svg class="bi" width="24" height="24" role="img" aria-label="Schedule">
+                                <use xlink:href="#schedule"/>
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/tasks" class="nav-link py-3 border-bottom" title="Tasks" data-bs-toggle="tooltip"
+                           data-bs-placement="right">
+                            <svg class="bi" width="24" height="24" role="img" aria-label="Tasks">
+                                <use xlink:href="#tasks"/>
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/base" class="nav-link py-3 border-bottom" title="Mind map" data-bs-toggle="tooltip"
+                           data-bs-placement="right">
+                            <svg class="bi" width="24" height="24" role="img" aria-label="Mind map">
+                                <use xlink:href="#mind map"/>
+                            </svg>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/base" class="nav-link py-3 border-bottom" title="Progress" data-bs-toggle="tooltip"
+                           data-bs-placement="right">
+                            <svg class="bi" width="24" height="24" role="img" aria-label="Progress">
+                                <use xlink:href="#progress"/>
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+                <div class="dropdown border-top text-bottom">
+                    <a href="#"
+                       class="d-flex align-items-center justify-content-center p-3 link-light text-decoration-none dropdown-toggle"
+                       id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="static/base/user-img.png" width="24" height="24" class="rounded-circle">
+                    </a>
+                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="/logout">Sign out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-11">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                <div class="alerts">
+                    <ul class="form-signin">
+                        {% for category, message in messages %}
+                            {% if category == "success" or category == "primary" %}
+                                <div class="alert alert-{{ category }} d-flex align-items-center alert-dismissible fade show"
+                                     role="alert">
+                                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                         aria-label="{{ category }}">
+                                        <use xlink:href="#{{ category }}"/>
+                                    </svg>
+                                    <div>{{ message }}</div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-{{ category }} d-flex align-items-center alert-dismissible fade show"
+                                     role="alert">
+                                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                         aria-label="{{ category }}">
+                                        <use xlink:href="#warning_danger"/>
+                                    </svg>
+                                    <div>{{ message }}</div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</main>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    {#    To be deleted DOWN#}
+    <symbol id="temp" viewBox="0 0 16 16">
+        <path d="M7.988 12.158c-1.851 0-2.941-1.57-2.941-3.99V7.84c0-2.408 1.101-3.996 2.965-3.996 1.857 0 2.935 1.57 2.935 3.996v.328c0 2.408-1.101 3.99-2.959 3.99ZM8 4.951c-1.008 0-1.629 1.09-1.629 2.895v.31c0 1.81.627 2.895 1.629 2.895s1.623-1.09 1.623-2.895v-.31c0-1.8-.621-2.895-1.623-2.895Z"/>
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0ZM1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8Z"/>
+    </symbol>
+    {#        To be deleted UP #}
+    <symbol id="Projects-down" viewBox="0 0 16 16">
+        <path fill-rule="evenodd"
+              d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.854 5.146a.5.5 0 1 0-.708.708L9.243 9.95H6.475a.5.5 0 1 0 0 1h3.975a.5.5 0 0 0 .5-.5V6.475a.5.5 0 1 0-1 0v2.768L5.854 5.146z"/>
+    </symbol>
+    <symbol id="tasks" viewBox="0 0 16 16">
+        <path fill-rule="evenodd"
+              d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z"/>
+    </symbol>
+    <symbol id="schedule" viewBox="0 0 16 16">
+        <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+    </symbol>
+    <symbol id="mind map" viewBox="0 0 16 16">
+        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+    </symbol>
+    <symbol id="progress" viewBox="0 0 16 16">
+        <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2z"/>
+    </symbol>
+    <symbol id="success" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+    </symbol>
+    <symbol id="primary" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+    </symbol>
+    <symbol id="warning_danger" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </symbol>
+    {% block svg %} {% endblock %}
+</svg>
+</body>

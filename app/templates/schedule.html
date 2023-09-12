@@ -1,0 +1,124 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- My css for this template-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='schedule.css')}}">
+    <!-- Bootstrap 5 style css-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='tasks.js') }}"></script>
+</head>
+<body>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel-first panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">Not Started</h3>
+                </div>
+                <div class="panel-body" id="not-started">
+                    <div class="bs-callout" draggable="true" id="task001">
+                        <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
+                             data-bs-target="#registration-form" role="button" aria-expanded="false" aria-controls="registration-form">
+                            <i class="fa fa-arrow-down"></i>
+                        </div>
+                        <h4 class="title text-left">Registration form</h4>
+                        <div class="collapse" id="registration-form">
+                            <p class="text">User registration form should only contain email and password, and
+                                automatically redirect to an email verification page. Once the address is verified, the
+                                user can access his/her dashboard.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-sm-12">
+            <div class="panel-second panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">In Progress</h3>
+                </div>
+                <div class="panel-body " id="in-progress">
+                    <div class="bs-callout" draggable="true" id="task002">
+                        <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
+                             data-bs-target="#multiple-languages" role="button" aria-expanded="false" aria-controls="multiple-languages">
+                            <i class="fa fa-arrow-down"></i>
+                        </div>
+                        <h4 class="title text-left">Multiple Languages</h4>
+                        <div class="collapse" id="multiple-languages">
+                            <p class="text">Geolocation detection by IP and auto setting the language.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+            <div class="panel-third panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">Completed</h3>
+                </div>
+                <div class="panel-body" id="completed">
+                    <div class="bs-callout" draggable="true" id="task003">
+                        <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
+                             data-bs-target="#laundry" role="button" aria-expanded="false" aria-controls="laundry">
+                            <i class="fa fa-arrow-down"></i>
+                        </div>
+                        <h4 class="title text-left">Spanish Translation</h4>
+                        <div class="collapse" id="laundry">
+                            <p class="text">The complete website needs to be translated into Spanish. We will use
+                                Laundry.js Localize to translate everything on the fly.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="panel-fourth panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">Re-opened</h3>
+                </div>
+                <div class="panel-body" id="re-opened">
+                    <div class="bs-callout" draggable="true" id="task004">
+                        <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse" data-bs-target="#reg1" role="button" aria-expanded="false" aria-controls="reg1">
+                            <i class="fa fa-arrow-down"></i>
+                        </div>
+                        <h4 class="title text-left">Facebook & Google oauth</h4>
+                        <div class="collapse" id="reg1">
+                            <p class="text">New users should be able to register with their google and/or facebook
+                                account. Existing users should be able to couple their accounts to a google and/or
+                                facebook account.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+            <div class="panel panel-fifth">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">On Hold</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="bs-callout" draggable="true" id="task005">
+                        <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse" data-bs-target="#reg2" role="button" aria-expanded="false" aria-controls="reg2">
+                            <i class="fa fa-arrow-down"></i>
+                        </div>
+                        <h4 class="title text-left">Insights &amp; Metrics</h4>
+                        <div class="collapse" id="reg2">
+                            <p class="text">Customers can access metrics and insights.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

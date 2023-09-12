@@ -1,0 +1,68 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #040508 !important;
+}
+
+input, h1 {
+    color: #f7f0f0;
+}
+
+button[type="submit"] {
+    background-color: darkgreen !important;
+    color: #f7f0f0 !important;
+}
+
+button[type="submit"]:hover, button[type="submit"]:focus {
+    background-color: #ADD8E6 !important;
+    color: #000080 !important;
+    outline: 0 !important;
+}
+
+.checkbox {
+    color: white;
+}
+
+.logo {
+    fill: #f7f0f0;
+    margin-bottom: 15px;
+}
+
+.form-signin {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+}
+
+.form-signin .form-floating:focus-within {
+    z-index: 2;
+}
+
+.form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: -1px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.form-signin input[type="username"] {
+    margin-bottom: -1px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.password {
+    margin-bottom: 10px !important;
+}

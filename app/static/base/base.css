@@ -1,0 +1,42 @@
+body {
+  min-height: -webkit-fill-available;
+  min-height: 100vh;
+}
+
+main {
+  height: -webkit-fill-available;
+  height: 100vh;
+  max-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: #040508;
+}
+
+.bi {
+  vertical-align: -.125em;
+  pointer-events: none;
+  fill: #f7f0f0;
+}
+
+.dropdown-toggle { outline: 0; }
+
+.nav-flush .nav-link {
+  border-radius: 0;
+}
+
+.dropdown-menu {
+  background-color: #343a40 !important;
+}
+
+.dropdown-item {
+  color: #f7f0f0 !important;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+  background-color: #ADD8E6 !important;
+  color: #000080 !important;
+}
+
+.d-flex {
+  background-color: #000105;
+}

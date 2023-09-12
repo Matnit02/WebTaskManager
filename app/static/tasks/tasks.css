@@ -1,0 +1,170 @@
+h1, h2, h3, h4, h5, h6, .btn {
+    font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.task {
+    padding: 10px;
+    margin: 20px 0;
+    border: 1px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+}
+
+.task h4 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.task p:last-child {
+    margin-bottom: 0;
+}
+
+.task code {
+    border-radius: 3px;
+}
+
+.task + .task {
+    margin-top: -5px;
+}
+
+.panel-second {
+    border-top: 8px solid #29B6F6;
+}
+
+.panel-first {
+    border-top: 8px solid #FFB300;
+}
+
+.panel-third {
+    border-top: 8px solid #FF5733;
+}
+
+.panel-fifth {
+    border-top: 8px solid #8BC34A;
+}
+
+.panel-fourth {
+    border-top: 8px solid #C70039;
+}
+
+.panel-title {
+    font-size: 36px;
+    color: #f7f0f0;
+}
+
+.title {
+    color: #f7f0f0;
+}
+
+.btn {
+    line-height: 1 !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.text {
+    color: #999;
+}
+
+.panel {
+    margin-right: 50px;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #eee;
+    background-color: #060912;
+}
+
+.panel-heading {
+    margin-top: 25px;
+}
+
+.fa-arrow-down{
+    color: darkgreen;
+}
+.fa-minus {
+    color: darkred;
+}
+
+.subtask {
+    color: #f7f0f0;
+}
+
+.subtask-list-item {
+    margin-bottom: 7px !important;
+}
+
+.subtask-text {
+    margin-bottom: 8px !important;
+    margin-top: 8px;
+}
+
+ul {
+    color: darkred;
+}
+
+.navbar {
+   margin-right: 20px;
+}
+
+.custom-button {
+    background-color: transparent;
+    border: none;
+    color: #f7f0f0 !important;
+}
+
+.custom-button:hover, .custom-button:focus {
+    background-color: transparent !important;
+    color: #000080 !important;
+    outline: 0 !important;
+}
+
+hr {
+    border-top: 1px dashed black;
+}
+
+button[type="submit"] {
+    background-color: darkgreen !important;
+    color: #f7f0f0 !important;
+}
+
+button:hover, button:focus {
+    background-color: #ADD8E6 !important;
+    color: #000080 !important;
+    outline: 0 !important;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+}
+
+.btn-toggle {
+     background-color: transparent !important;
+    color: #000080 !important;
+    border: none !important;
+}
+
+#rm-button-toggled:checked + .btn-toggle {
+    background-color: #ADD8E6 !important;
+    color: #000080 !important;
+}
+.btn-group {
+    margin-right: 9px !important;
+}
+
+.add-user {
+    background-color: transparent !important;
+    color: #f7f0f0 !important;
+}
+
+.add-user-label {
+    color: #f7f0f0 !important;
+}
+
+.add-user-form {
+    margin-right: 5px !important;
+}
+
+.navbar {
+    margin-bottom: 20px !important;
+}

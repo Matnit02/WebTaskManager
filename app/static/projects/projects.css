@@ -1,0 +1,54 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #040508 !important;
+}
+
+main {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+}
+
+.project {
+    color: white;
+    border: 1px solid #eee;
+    cursor: pointer;
+}
+
+.project-button {
+    border: 1px solid #eee !important;
+    cursor: pointer;
+}
+
+.project-button h3 {
+    color: #f7f0f0;
+}
+
+.logo {
+    fill: #f7f0f0;
+}
+svg {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-left: 8px;
+}
+
+button[type="submit"] {
+    background-color: darkgreen !important;
+    color: #f7f0f0 !important;
+}
+
+button:hover, button:focus {
+    background-color: #ADD8E6 !important;
+    color: #000080 !important;
+    outline: 0 !important;
+}

@@ -1,0 +1,414 @@
+{% extends 'base.html' %}
+
+{% block title %} Tasks{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='tasks/tasks.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{ url_for('static', filename='tasks/tasks.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-light rounded" aria-label="Twelfth navbar example">
+        <div class="collapse navbar-collapse justify-content-md-center" id="navbar">
+            <form class="ms-auto add-user-form" id="addUserForm">
+                <div class="form-floating">
+                    <input type="text" class="form-control required-input add-user" id="user_email" name="user_email"
+                           placeholder="User's email" required style="height: 50px;">
+                    <label class="add-user-label" for="task_title">User's email</label>
+                </div>
+            </form>
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary custom-button" id="addUserButton">
+                    <svg class="bi" width="30" height="30" fill="currentColor">
+                        <use xlink:href="#colab"></use>
+                    </svg>
+                </button>
+                <button type="button" class="btn btn-primary btn-light dropdown-toggle dropdown-toggle-split"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" id="users_list">
+                    {% for username in usernames %}
+                        <li>
+                            <div class="dropdown-item dropdown-user" onclick="showDeleteModal('{{ username }}')"
+                                 id="{{ username }}">{{ username }}</div>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">Confirm deletion</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete the user: <span style="color: red"
+                                                                                id="userToDelete"></span> ?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel
+                                </button>
+                                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="checkbox" class="btn-check" id="rm-button-toggled" autocomplete="off">
+            <label class="btn btn-primary btn-toggle" for="rm-button-toggled">
+                <svg class="bi" width="30" height="30" fill="currentColor">
+                    <use xlink:href="#trash"></use>
+                </svg>
+            </label>
+            <button class="btn btn-primary custom-button" data-bs-toggle="modal" data-bs-target="#new-task">
+                <svg class="bi" width="30" height="30" fill="currentColor">
+                    <use xlink:href="#new"></use>
+                </svg>
+            </button>
+        </div>
+        <div class="modal fade" id="new-task" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Create new task!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" id="myModalForm">
+                        <div class="modal-body">
+                            <div class="form-floating">
+                                <input type="text" class="form-control required-input" id="task_title" name="task_title"
+                                       placeholder="Task title" required>
+                                <label for="task_title">Task title</label>
+                            </div>
+                            <select class="form-select required-input" id="panel_id" name="panel_id" required>
+                                <option value="">Choose category:</option>
+                                <option value="not-started">Not Started</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="re-opened">Re-opened</option>
+                                <option value="in-review">In review</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                            <textarea class="form-control" id="task_description" rows="4" name="task_description"
+                                      placeholder="Describe your task (optional)"></textarea>
+                            <div class="form-floating">
+                                <input type="datetime-local" class="form-control required-input" id="deadline"
+                                       name="deadline" required>
+                                <label for="deadline">Task deadline</label>
+                            </div>
+                            <div id="dynamicFieldsContainer"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="addSubtaskBtn" class="btn btn-primary me-auto">Add Subtask
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go back</button>
+                            <button type="submit" class="btn btn-primary" id="create-btn">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="row">
+    <div class="col-sm-8 col-md-4 col-lg-2">
+        <div class="panel-first panel">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">Not Started</h3>
+            </div>
+            <div class="panel-body" id="not-started" data-panel-id="not-started">
+                <p>&nbsp;</p>
+                {% for task in tasks %}
+                    {% if task.id_panel == "not-started" %}
+                        <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
+                            <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
+                                 data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
+                                 aria-controls="task-{{ task.id }}-content">
+                                <i class="fa fa-arrow-down"></i>
+                            </div>
+                            <h4 class="title text-left">{{ task.task_title }}</h4>
+                            <div class="collapse" id="task-{{ task.id }}-content">
+                                <p class="text">{{ task.description }} </p>
+                                <div class="subtasks" id="subtasks">
+                                    <form>
+                                        <ul class="subtask-list" id="subtask-list-{{ task.id }}">
+                                            {% for subtask in task.children %}
+                                                <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
+                                                    data-task-id="{{ subtask.id }}">
+                                                    <div class="subtask">
+                                                        <input class="form-check-input" type="checkbox"
+                                                               id="subtask-{{ subtask.id }}-checkbox">
+                                                        <label class="form-check-label" for="subtask001-checkbox">
+                                                            {{ subtask.task_title }}
+                                                        </label>
+                                                        <div class="btn btn-sm pull-right collapse-btn"
+                                                             data-bs-toggle="collapse"
+                                                             data-bs-target="#subtask-{{ subtask.id }}-text"
+                                                             role="button"
+                                                             aria-expanded="false"
+                                                             aria-controls="subtask-{{ subtask.id }}-text">
+                                                            <i class="fa fa-arrow-down"></i>
+                                                        </div>
+                                                        <div class="collapse" id="subtask-{{ subtask.id }}-text">
+                                                            <p class="subtask-text text"> {{ subtask.description }} </p>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-8 col-md-4 col-lg-2">
+        <div class="panel-second panel">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">In Progress</h3>
+            </div>
+            <div class="panel-body" id="in-progress" data-panel-id="in-progress">
+                <p>&nbsp;</p>
+                {% for task in tasks %}
+                    {% if task.id_panel == "in-progress" %}
+                        <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
+                            <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
+                                 data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
+                                 aria-controls="task-{{ task.id }}-content">
+                                <i class="fa fa-arrow-down"></i>
+                            </div>
+                            <h4 class="title text-left">{{ task.task_title }}</h4>
+                            <div class="collapse" id="task-{{ task.id }}-content">
+                                <p class="text">{{ task.description }} </p>
+                                <div class="subtasks" id="subtasks">
+                                    <form>
+                                        <ul class="subtask-list" id="subtask-list-{{ task.id }}">
+                                            {% for subtask in task.children %}
+                                                <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
+                                                    data-task-id="{{ subtask.id }}">
+                                                    <div class="subtask">
+                                                        <input class="form-check-input" type="checkbox"
+                                                               id="subtask-{{ subtask.id }}-checkbox">
+                                                        <label class="form-check-label" for="subtask001-checkbox">
+                                                            {{ subtask.task_title }}
+                                                        </label>
+                                                        <div class="btn btn-sm pull-right collapse-btn"
+                                                             data-bs-toggle="collapse"
+                                                             data-bs-target="#subtask-{{ subtask.id }}-text"
+                                                             role="button"
+                                                             aria-expanded="false"
+                                                             aria-controls="subtask-{{ subtask.id }}-text">
+                                                            <i class="fa fa-arrow-down"></i>
+                                                        </div>
+                                                        <div class="collapse" id="subtask-{{ subtask.id }}-text">
+                                                            <p class="subtask-text text"> {{ subtask.description }} </p>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-8 col-md-4 col-lg-2">
+        <div class="panel-third panel">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">Re-opened</h3>
+            </div>
+            <div class="panel-body" id="re-opened" data-panel-id="re-opened">
+                <p>&nbsp;</p>
+                {% for task in tasks %}
+                    {% if task.id_panel == "re-opened" %}
+                        <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
+                            <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
+                                 data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
+                                 aria-controls="task-{{ task.id }}-content">
+                                <i class="fa fa-arrow-down"></i>
+                            </div>
+                            <h4 class="title text-left">{{ task.task_title }}</h4>
+                            <div class="collapse" id="task-{{ task.id }}-content">
+                                <p class="text">{{ task.description }} </p>
+                                <div class="subtasks" id="subtasks">
+                                    <form>
+                                        <ul class="subtask-list" id="subtask-list-{{ task.id }}">
+                                            {% for subtask in task.children %}
+                                                <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
+                                                    data-task-id="{{ subtask.id }}">
+                                                    <div class="subtask">
+                                                        <input class="form-check-input" type="checkbox"
+                                                               id="subtask-{{ subtask.id }}-checkbox">
+                                                        <label class="form-check-label" for="subtask001-checkbox">
+                                                            {{ subtask.task_title }}
+                                                        </label>
+                                                        <div class="btn btn-sm pull-right collapse-btn"
+                                                             data-bs-toggle="collapse"
+                                                             data-bs-target="#subtask-{{ subtask.id }}-text"
+                                                             role="button"
+                                                             aria-expanded="false"
+                                                             aria-controls="subtask-{{ subtask.id }}-text">
+                                                            <i class="fa fa-arrow-down"></i>
+                                                        </div>
+                                                        <div class="collapse" id="subtask-{{ subtask.id }}-text">
+                                                            <p class="subtask-text text"> {{ subtask.description }} </p>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8 col-md-4 col-lg-2">
+        <div class="panel-fourth panel">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">In review</h3>
+            </div>
+            <div class="panel-body" id="in-review" data-panel-id="in-review">
+                <p>&nbsp;</p>
+                {% for task in tasks %}
+                    {% if task.id_panel == "in-review" %}
+                        <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
+                            <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
+                                 data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
+                                 aria-controls="task-{{ task.id }}-content">
+                                <i class="fa fa-arrow-down"></i>
+                            </div>
+                            <h4 class="title text-left">{{ task.task_title }}</h4>
+                            <div class="collapse" id="task-{{ task.id }}-content">
+                                <p class="text">{{ task.description }} </p>
+                                <div class="subtasks" id="subtasks">
+                                    <form>
+                                        <ul class="subtask-list" id="subtask-list-{{ task.id }}">
+                                            {% for subtask in task.children %}
+                                                <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
+                                                    data-task-id="{{ subtask.id }}">
+                                                    <div class="subtask">
+                                                        <input class="form-check-input" type="checkbox"
+                                                               id="subtask-{{ subtask.id }}-checkbox">
+                                                        <label class="form-check-label" for="subtask001-checkbox">
+                                                            {{ subtask.task_title }}
+                                                        </label>
+                                                        <div class="btn btn-sm pull-right collapse-btn"
+                                                             data-bs-toggle="collapse"
+                                                             data-bs-target="#subtask-{{ subtask.id }}-text"
+                                                             role="button"
+                                                             aria-expanded="false"
+                                                             aria-controls="subtask-{{ subtask.id }}-text">
+                                                            <i class="fa fa-arrow-down"></i>
+                                                        </div>
+                                                        <div class="collapse" id="subtask-{{ subtask.id }}-text">
+                                                            <p class="subtask-text text"> {{ subtask.description }} </p>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-8 col-md-4 col-lg-2">
+        <div class="panel-fifth panel">
+            <div class="panel-heading">
+                <h3 class="panel-title text-center">Completed</h3>
+            </div>
+            <div class="panel-body" id="completed" data-panel-id="completed">
+                <p>&nbsp;</p>
+                {% for task in tasks %}
+                    {% if task.id_panel == "completed" %}
+                        <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
+                            <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
+                                 data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
+                                 aria-controls="task-{{ task.id }}-content">
+                                <i class="fa fa-arrow-down"></i>
+                            </div>
+                            <h4 class="title text-left">{{ task.task_title }}</h4>
+                            <div class="collapse" id="task-{{ task.id }}-content">
+                                <p class="text">{{ task.description }} </p>
+                                <div class="subtasks" id="subtasks">
+                                    <form>
+                                        <ul class="subtask-list" id="subtask-list-{{ task.id }}">
+                                            {% for subtask in task.children %}
+                                                <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
+                                                    data-task-id="{{ subtask.id }}">
+                                                    <div class="subtask">
+                                                        <input class="form-check-input" type="checkbox"
+                                                               id="subtask-{{ subtask.id }}-checkbox">
+                                                        <label class="form-check-label" for="subtask001-checkbox">
+                                                            {{ subtask.task_title }}
+                                                        </label>
+                                                        <div class="btn btn-sm pull-right collapse-btn"
+                                                             data-bs-toggle="collapse"
+                                                             data-bs-target="#subtask-{{ subtask.id }}-text"
+                                                             role="button"
+                                                             aria-expanded="false"
+                                                             aria-controls="subtask-{{ subtask.id }}-text">
+                                                            <i class="fa fa-arrow-down"></i>
+                                                        </div>
+                                                        <div class="collapse" id="subtask-{{ subtask.id }}-text">
+                                                            <p class="subtask-text text"> {{ subtask.description }} </p>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block svg %}
+    <symbol id="new" viewBox="0 0 16 16">
+        <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0z"/>
+    </symbol>
+    <symbol id="trash" viewBox="0 0 16 16">
+        <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z"/>
+    </symbol>
+    <symbol id="colab" viewBox="0 0 16 16">
+        <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+        <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z"/>
+    </symbol>
+{% endblock %}
