@@ -45,5 +45,7 @@ def create_app(conf=None):
     app.register_blueprint(auth)
     from .views.projects import projects
     app.register_blueprint(projects)
+    from .views.progress import progress
+    app.register_blueprint(progress)
 
     return app

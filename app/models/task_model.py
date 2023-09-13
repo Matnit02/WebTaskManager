@@ -32,3 +32,30 @@ class Task(db.Model):
     def get_tasks_list(project_id):
         tasks = Task.query.filter_by(project_id=project_id).order_by(Task.position).all()
         return tasks
+
+    @staticmethod
+    def count_tasks_and_subtasks_by_panel(project_id):
+        counts_by_panel = {}
+
+        main_tasks = Task.query.filter(Task.project_id == project_id, Task.parent_id == None).all()
+
+        for task in main_tasks:
+            if task.id_panel not in counts_by_panel:
+                counts_by_panel[task.id_panel] = {"main_tasks": 0, "subtasks": 0}
+
+            counts_by_panel[task.id_panel]["main_tasks"] += 1
+            subtasks_count = Task.query.filter(Task.parent_id == task.id).count()
+            counts_by_panel[task.id_panel]["subtasks"] += subtasks_count
+
+        return counts_by_panel
+
+    @staticmethod
+    def get_all_panel_ids(project_id):
+        panel_ids_query = db.session.query(Task.id_panel).filter(
+            Task.project_id == project_id,
+            Task.id_panel.isnot(None)
+        ).distinct()
+
+        panel_ids = [item[0] for item in panel_ids_query.all()]
+
+        return panel_ids

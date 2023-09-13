@@ -1,0 +1,29 @@
+.first-panel {
+    background-color: #f7f0f0 !important;
+    margin-right: 500px !important;
+    margin-bottom: 100px !important;
+    border: 1px solid #f7f0f0 !important;
+}
+
+.custom-text {
+    background-color: #000105 !important;
+    color: #f7f0f0 !important;
+}
+
+.custom-circle-text {
+    background-color: tan !important;
+    color: #f7f0f0 !important;
+}
+
+.second-panel {
+    background-color: #f7f0f0 !important;
+    margin-left: 500px !important;
+    margin-bottom: 100px !important;
+    border: 1px solid #f7f0f0 !important;
+}
+
+.intermediate-panel {
+    background-color: #f7f0f0 !important;
+    margin-bottom: 100px !important;
+    border: 1px solid #f7f0f0 !important;
+}
