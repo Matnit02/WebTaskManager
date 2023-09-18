@@ -168,3 +168,7 @@ button:hover, button:focus {
 .navbar {
     margin-bottom: 20px !important;
 }
+
+.panel-body {
+    min-height: 50px;
+}

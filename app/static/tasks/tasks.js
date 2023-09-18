@@ -23,6 +23,7 @@ $(document).ready(function () {
 
 function initializeTaskSorting() {
     $(".panel-body").sortable({
+        items: ".task",
         connectWith: ".panel-body",
         start: function (event, ui) {
             ui.item.startPanelId = ui.item.closest('.panel-body').attr('data-panel-id');
@@ -52,7 +53,7 @@ function initializeTaskSorting() {
                 });
             });
 
-            if (newPanelId === "completed") {
+            if (ui.item.startPanelId !== "completed" && newPanelId === "completed") {
                 markTaskAndSubtasksAsCompleted(itemId);
             }
 
@@ -302,17 +303,6 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.status === "success") {
                     toastr[response.status](response.message);
-
-                    let addedUsername = response.username;
-
-                    let newUserHTML = `
-                        <li>
-                            <div class="dropdown-item dropdown-user" onclick="showDeleteModal('${addedUsername}')" id="${addedUsername}">
-                                ${addedUsername}
-                            </div>
-                        </li>`;
-
-                    $("#users_list").append(newUserHTML);
                     $("#user_email").val('');
 
                 } else {

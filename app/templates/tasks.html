@@ -131,7 +131,6 @@
                 <h3 class="panel-title text-center">Not Started</h3>
             </div>
             <div class="panel-body" id="not-started" data-panel-id="not-started">
-                <p>&nbsp;</p>
                 {% for task in tasks %}
                     {% if task.id_panel == "not-started" %}
                         <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
@@ -188,7 +187,6 @@
                 <h3 class="panel-title text-center">In Progress</h3>
             </div>
             <div class="panel-body" id="in-progress" data-panel-id="in-progress">
-                <p>&nbsp;</p>
                 {% for task in tasks %}
                     {% if task.id_panel == "in-progress" %}
                         <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
@@ -245,7 +243,6 @@
                 <h3 class="panel-title text-center">Re-opened</h3>
             </div>
             <div class="panel-body" id="re-opened" data-panel-id="re-opened">
-                <p>&nbsp;</p>
                 {% for task in tasks %}
                     {% if task.id_panel == "re-opened" %}
                         <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
@@ -301,7 +298,6 @@
                 <h3 class="panel-title text-center">In review</h3>
             </div>
             <div class="panel-body" id="in-review" data-panel-id="in-review">
-                <p>&nbsp;</p>
                 {% for task in tasks %}
                     {% if task.id_panel == "in-review" %}
                         <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
@@ -358,7 +354,6 @@
                 <h3 class="panel-title text-center">Completed</h3>
             </div>
             <div class="panel-body" id="completed" data-panel-id="completed">
-                <p>&nbsp;</p>
                 {% for task in tasks %}
                     {% if task.id_panel == "completed" %}
                         <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
