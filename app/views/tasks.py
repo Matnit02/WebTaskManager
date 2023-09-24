@@ -5,76 +5,87 @@ from app.models.auth_model import User
 from app.models.project_model import Project
 from app.extensions import db, socketio
 from datetime import datetime
+import pytz
 
 tasks = Blueprint('tasks', __name__)
 
 
-@tasks.route('/tasks', methods=('GET', 'POST'))
+@tasks.route('/tasks', methods=['GET'])
 @login_required
 def index():
-    if request.method == 'POST':
-        task_title = request.form.get('task_title')
-        id_panel = request.form.get('panel_id')
-        description = request.form.get('task_description')
-        deadline = datetime.strptime(request.form.get('deadline'), '%Y-%m-%dT%H:%M')
-
-        new_task = Task(task_title=task_title, id_owner=current_user.id, id_panel=id_panel, description=description,
-                        project_id=session.get('project_id'), deadline=deadline)
-        db.session.add(new_task)
-        db.session.flush()
-
-        subtask_titles = request.form.getlist('subtask_title')
-        subtask_descriptions = request.form.getlist('subtask_description')
-        subtask_deadlines = request.form.getlist('subtask_deadline')
-
-        has_deadline_problem = False
-        for i in range(len(subtask_titles)):
-            subtask = Task(
-                id_owner=new_task.id_owner,
-                task_title=subtask_titles[i],
-                description=subtask_descriptions[i],
-                project_id=session.get('project_id'),
-                deadline=datetime.strptime(subtask_deadlines[i], '%Y-%m-%dT%H:%M'),
-                parent_id=new_task.id
-            )
-
-            if subtask.deadline > new_task.deadline:
-                flash('Subtask deadline cannot be later than the main task deadline', 'warning')
-                has_deadline_problem = True
-                break
-
-            db.session.add(subtask)
-
-        if not has_deadline_problem:
-            db.session.commit()
-            socketio.emit('new_task_added', {
-                'task_id': new_task.id,
-                'task_title': new_task.task_title,
-                'description': new_task.description,
-                'deadline': new_task.deadline.strftime('%Y-%m-%dT%H:%M'),
-                'panel_id': new_task.id_panel,
-                'children': [
-                    {
-                        'id': subtask.id,
-                        'title': subtask.task_title,
-                        'description': subtask.description
-                    } for subtask in new_task.children
-                ]
-            })
-
-        else:
-            db.session.rollback()
-
     usernames = User.get_usernames_by_project_id(session.get('project_id'))
-    tasks_list = Task.get_tasks_list(session.get('project_id'))
+    tasks_list = Task.get_main_tasks_list(session.get('project_id'))
 
     if User.can_access_project(current_user.id, session.get('project_id')):
-        return render_template('tasks.html', usernames = usernames, project_name=session.get('project_name'), tasks=tasks_list)
+        return render_template('tasks.html', usernames=usernames, project_name=session.get('project_name'),
+                               tasks=tasks_list)
 
     return redirect(url_for('projects.index'))
 
 
-@tasks.route('/update-order', methods=['POST'])
+@tasks.route('/add_task', methods=['POST'])
+def add_task():
+    task_title = request.form.get('task_title')
+    id_panel = request.form.get('panel_id')
+    description = request.form.get('task_description')
+    deadline = datetime.strptime(request.form.get('deadline'), '%Y-%m-%dT%H:%M')
+
+    local_tz = pytz.timezone('Europe/Warsaw')
+    local_time = datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(local_tz).replace(tzinfo=None)
+
+    new_task = Task(task_title=task_title, id_owner=current_user.id, id_panel=id_panel, description=description,
+                    project_id=session.get('project_id'), deadline=deadline, created_at=local_time)
+
+    db.session.add(new_task)
+    db.session.flush()
+
+    subtask_titles = request.form.getlist('subtask_title')
+    subtask_descriptions = request.form.getlist('subtask_description')
+    subtask_deadlines = request.form.getlist('subtask_deadline')
+
+    for i in range(len(subtask_titles)):
+        subtask = Task(
+            id_owner=new_task.id_owner,
+            task_title=subtask_titles[i],
+            description=subtask_descriptions[i],
+            project_id=session.get('project_id'),
+            deadline=datetime.strptime(subtask_deadlines[i], '%Y-%m-%dT%H:%M'),
+            parent_id=new_task.id,
+            created_at=local_time
+        )
+
+        if subtask.deadline > new_task.deadline:
+            db.session.rollback()
+            return jsonify(
+                {'status': 'warning', 'message': 'Subtask deadline cannot be later than the main task deadline'})
+
+        db.session.add(subtask)
+
+    db.session.commit()
+    socketio.emit('new_task_added', {
+        'task_id': new_task.id,
+        'task_title': new_task.task_title,
+        'description': new_task.description,
+        'deadline': new_task.deadline.strftime('%Y-%m-%d %H:%M:%S'),
+        'panel_id': new_task.id_panel,
+        'deadline_progress': new_task.deadline_progress,
+        'time_left': new_task.time_left,
+        'children': [
+            {
+                'id': subtask.id,
+                'title': subtask.task_title,
+                'description': subtask.description,
+                'deadline': subtask.deadline.strftime('%Y-%m-%d %H:%M:%S'),
+                'deadline_progress': subtask.deadline_progress,
+                'time_left': subtask.time_left
+            } for subtask in new_task.children
+        ]
+    })
+
+    return jsonify({'status': 'success', 'message': 'Task added successfully'})
+
+
+@tasks.route('/update-order', methods=['PATCH'])
 def update_order():
     order = request.form.getlist('order[]')
     panel_id = request.form.get('panel_id')
@@ -98,7 +109,7 @@ def update_order():
     return jsonify({"message": "Success"}), 200
 
 
-@tasks.route('/update-task-panel', methods=['POST'])
+@tasks.route('/update-task-panel', methods=['PATCH'])
 def update_task_panel():
     task_id = request.form.get('task_id')
     panel_id = request.form.get('panel_id')
@@ -111,7 +122,8 @@ def update_task_panel():
 
     return "Success", 200
 
-@tasks.route('/delete_task', methods=['POST'])
+
+@tasks.route('/delete_task', methods=['DELETE'])
 def delete_task():
     task_id = request.form.get('task_id')
     if not task_id:
@@ -130,7 +142,7 @@ def delete_task():
     return jsonify({"status": "success", "message": "Task deleted successfully."}), 200
 
 
-@tasks.route('/delete_user_from_project', methods=['POST'])
+@tasks.route('/delete_user_from_project', methods=['DELETE'])
 def delete_user_from_project():
     username = request.form.get('username')
     project_id = session.get('project_id')
@@ -140,7 +152,6 @@ def delete_user_from_project():
 
     user = User.get_user(username)
     project = Project.query.get(project_id)
-
 
     if not user or not project:
         return jsonify({"status": "error", "message": "User or Project not found"})
@@ -162,6 +173,7 @@ def delete_user_from_project():
         return jsonify({"status": "success", "message": "User removed from project"})
 
     return jsonify({"status": "error", "message": "Project was not associated with user"})
+
 
 @tasks.route('/add_user_to_project', methods=['POST'])
 def add_user_to_project():
@@ -188,6 +200,7 @@ def add_user_to_project():
     socketio.emit('user_added', {'username': user.username})
     return jsonify({"status": "success", "message": "User added successfully", "username": user.username})
 
+
 @tasks.route('/check_user_status', methods=['GET'])
 def check_user_validity():
     project_id = session.get('project_id')
@@ -201,7 +214,8 @@ def check_user_validity():
     user_has_project = any(project.id == project_id for project in user.projects)
     return jsonify({"status": "active" if user_has_project else "removed"})
 
-@tasks.route('/update-task-status', methods=['POST'])
+
+@tasks.route('/update-task-status', methods=['PATCH'])
 def update_task_status():
     task_id = request.form.get('task_id')
     finished = request.form.get('finished') == 'true'
@@ -220,7 +234,7 @@ def update_task_status():
         return jsonify(status='error', message='Error updating task: ' + str(e)), 500
 
 
-@tasks.route('/mark-all-completed', methods=['POST'])
+@tasks.route('/mark-all-completed', methods=['PATCH'])
 def mark_all_completed():
     task_id = request.form.get('task_id')
 
@@ -241,7 +255,8 @@ def mark_all_completed():
 
     return jsonify({'status': 'success', 'message': 'Task and subtasks marked as finished'}), 200
 
-@tasks.route('/mark-task-unfinished', methods=['POST'])
+
+@tasks.route('/mark-task-unfinished', methods=['PATCH'])
 def mark_task_unfinished():
     task_id = request.form.get('task_id')
 
@@ -256,4 +271,20 @@ def mark_task_unfinished():
     task.finished = False
     db.session.commit()
 
+    socketio.emit('task_moved_from_completed', {'task_id': task_id})
     return jsonify(status='success', message='Task marked as unfinished')
+
+
+@tasks.route('/get-task-data', methods=['GET'])
+def get_task_data():
+    task_id = request.args.get('task_id')
+    task = Task.query.get(task_id)
+
+    if not task:
+        return jsonify({"status": "error", "message": "task not found"}), 404
+
+    time_left_tuple = task.time_left
+    time_left = list(time_left_tuple)
+
+    deadline_progress = task.deadline_progress
+    return jsonify({"time_left": time_left, "deadline_progress": deadline_progress}), 200

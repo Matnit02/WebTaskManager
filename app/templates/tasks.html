@@ -42,17 +42,17 @@
                 <ul class="dropdown-menu" id="users_list">
                     {% for username in usernames %}
                         <li>
-                            <div class="dropdown-item dropdown-user" onclick="showDeleteModal('{{ username }}')"
+                            <div class="dropdown-item dropdown-user" onclick="showDeleteUserModal('{{ username }}')"
                                  id="{{ username }}">{{ username }}</div>
                         </li>
                     {% endfor %}
                 </ul>
-                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+                <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel"
                      aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="deleteModalLabel">Confirm deletion</h5>
+                                <h5 class="modal-title" id="deleteUserModalLabel">Confirm deletion</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                             </div>
@@ -63,7 +63,7 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel
                                 </button>
-                                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Confirm</button>
+                                <button type="button" class="btn btn-danger" id="confirmDeleteUserBtn">Confirm</button>
                             </div>
                         </div>
                     </div>
@@ -125,281 +125,555 @@
         </div>
     </nav>
     <div class="row">
-    <div class="col-sm-8 col-md-4 col-lg-2">
-        <div class="panel-first panel">
-            <div class="panel-heading">
-                <h3 class="panel-title text-center">Not Started</h3>
-            </div>
-            <div class="panel-body" id="not-started" data-panel-id="not-started">
-                {% for task in tasks %}
-                    {% if task.id_panel == "not-started" %}
-                        <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
-                            <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
-                                 data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
-                                 aria-controls="task-{{ task.id }}-content">
-                                <i class="fa fa-arrow-down"></i>
-                            </div>
-                            <h4 class="title text-left">{{ task.task_title }}</h4>
-                            <div class="collapse" id="task-{{ task.id }}-content">
-                                <p class="text">{{ task.description }} </p>
-                                <div class="subtasks" id="subtasks">
-                                    <form>
-                                        <ul class="subtask-list" id="subtask-list-{{ task.id }}">
-                                            {% for subtask in task.children %}
-                                                <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
-                                                    data-task-id="{{ subtask.id }}">
-                                                    <div class="subtask">
-                                                        <input class="form-check-input" value="" type="checkbox"
-                                                               id="subtask-{{ subtask.id }}-checkbox"
-                                                                {% if subtask.finished %} checked {% endif %}>
-                                                        <label class="form-check-label"
-                                                               for="subtask-{{ subtask.id }}-checkbox">
-                                                            {{ subtask.task_title }}
-                                                        </label>
-                                                        <div class="btn btn-sm pull-right collapse-btn"
-                                                             data-bs-toggle="collapse"
-                                                             data-bs-target="#subtask-{{ subtask.id }}-text"
-                                                             role="button"
-                                                             aria-expanded="false"
-                                                             aria-controls="subtask-{{ subtask.id }}-text">
-                                                            <i class="fa fa-arrow-down"></i>
+        <div class="col-sm-8 col-md-4 col-lg-2 custom-column">
+            <div class="panel-first panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">Not Started</h3>
+                </div>
+                <div class="panel-body" id="not-started" data-panel-id="not-started">
+                    {% for task in tasks %}
+                        {% if task.id_panel == "not-started" %}
+                            <div class="task {% if  task.deadline_progress == 100 %} task-color-danger
+                                    {% elif task.deadline_progress < 50 %} task-color-primary
+                                    {% else %} task-color-warning {% endif %}"
+                                 draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
+                                <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
+                                     data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
+                                     aria-controls="task-{{ task.id }}-content">
+                                    <i class="fa fa-arrow-down"></i>
+                                </div>
+                                <h4 class="title text-left">{{ task.task_title }}</h4>
+                                <div class="collapse" id="task-{{ task.id }}-content">
+                                    <p class="text">{{ task.description }} </p>
+                                    <div class="progress-container">
+                                        <div class="{% if  task.deadline_progress == 100 %} progress-text-behind-deadline
+                                            {% elif task.deadline_progress < 50 %} progress-text-primary
+                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                            {% if task.deadline_progress == 100 %}
+                                                {{ task.time_left[0] }} days, {{ task.time_left[1] }} h,
+                                                {{ task.time_left[2] }} min late
+                                            {% else %}
+                                                {{ task.time_left[0] }} days, {{ task.time_left[1] }} h,
+                                                {{ task.time_left[2] }} min
+                                            {% endif %}
+                                        </div>
+                                        <div class="progress" role="progressbar" aria-label="Example with label"
+                                             aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar {% if task.deadline_progress < 50 %} bg-success
+                                            {% elif task.deadline_progress < 100 %} bg-warning {% else %} bg-danger {% endif %}"
+                                                 style="width: {{ task.deadline_progress }}%"></div>
+                                        </div>
+                                        <div class="task-deadline {% if  task.deadline_progress == 100 %} progress-text-behind-deadline
+                                            {% elif task.deadline_progress < 50 %} progress-text-primary
+                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                            DL: {{ task.deadline }}
+                                        </div>
+                                    </div>
+                                    <div class="subtasks" id="subtasks">
+                                        <form>
+                                            <ul class="subtask-list" id="subtask-list-{{ task.id }}">
+                                                {% for subtask in task.children %}
+                                                    <li class="subtask-list-item
+                                                            {% if  subtask.deadline_progress == 100 %} subtask-list-item-danger
+                                                            {% elif subtask.deadline_progress < 50 %} subtask-list-item-primary
+                                                            {% else %} subtask-list-item-warning {% endif %}"
+                                                        draggable="true" id="{{ subtask.id }}"
+                                                        data-task-id="{{ subtask.id }}">
+                                                        <div class="subtask">
+                                                            <input class="form-check-input" value="" type="checkbox"
+                                                                   id="subtask-{{ subtask.id }}-checkbox"
+                                                                    {% if subtask.finished %} checked {% endif %}>
+                                                            <label class="subtask-title form-check-label"
+                                                                   for="subtask-{{ subtask.id }}-checkbox">
+                                                                {{ subtask.task_title }}
+                                                            </label>
+                                                            <div class="btn btn-sm pull-right collapse-btn"
+                                                                 data-bs-toggle="collapse"
+                                                                 data-bs-target="#subtask-{{ subtask.id }}-text"
+                                                                 role="button"
+                                                                 aria-expanded="false"
+                                                                 aria-controls="subtask-{{ subtask.id }}-text">
+                                                                <i class="fa fa-arrow-down"></i>
+                                                            </div>
+                                                            <div class="collapse" id="subtask-{{ subtask.id }}-text">
+                                                                <p class="subtask-text text"> {{ subtask.description }} </p>
+                                                                <div class="subtask-progress-container">
+                                                                    <div class="{% if  subtask.deadline_progress == 100 %} progress-text-behind-deadline
+                                                                            {% elif subtask.deadline_progress < 50 %} progress-text-primary
+                                                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                                                        {% if subtask.deadline_progress == 100 %}
+                                                                            {{ subtask.time_left[0] }} days,
+                                                                            {{ subtask.time_left[1] }} h,
+                                                                            {{ subtask.time_left[2] }} min late
+                                                                        {% else %}
+                                                                            {{ subtask.time_left[0] }} days,
+                                                                            {{ subtask.time_left[1] }} h,
+                                                                            {{ subtask.time_left[2] }} min
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="progress" role="progressbar"
+                                                                         aria-label="Example with label"
+                                                                         aria-valuenow="25" aria-valuemin="0"
+                                                                         aria-valuemax="100">
+                                                                        <div class="progress-bar {% if subtask.deadline_progress < 50 %} bg-success
+                                                                                {% elif subtask.deadline_progress < 100 %} bg-warning
+                                                                                {% else %} bg-danger {% endif %}"
+                                                                             style="width: {{ subtask.deadline_progress }}%"></div>
+                                                                    </div>
+                                                                    <div class="subtask-deadline {% if  subtask.deadline_progress == 100 %} progress-text-behind-deadline
+                                                                            {% elif subtask.deadline_progress < 50 %} progress-text-primary
+                                                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                                                        DL: {{ subtask.deadline }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="collapse" id="subtask-{{ subtask.id }}-text">
-                                                            <p class="subtask-text text"> {{ subtask.description }} </p>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </form>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endif %}
-                {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-sm-8 col-md-4 col-lg-2">
-        <div class="panel-second panel">
-            <div class="panel-heading">
-                <h3 class="panel-title text-center">In Progress</h3>
-            </div>
-            <div class="panel-body" id="in-progress" data-panel-id="in-progress">
-                {% for task in tasks %}
-                    {% if task.id_panel == "in-progress" %}
-                        <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
-                            <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
-                                 data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
-                                 aria-controls="task-{{ task.id }}-content">
-                                <i class="fa fa-arrow-down"></i>
-                            </div>
-                            <h4 class="title text-left">{{ task.task_title }}</h4>
-                            <div class="collapse" id="task-{{ task.id }}-content">
-                                <p class="text">{{ task.description }} </p>
-                                <div class="subtasks" id="subtasks">
-                                    <form>
-                                        <ul class="subtask-list" id="subtask-list-{{ task.id }}">
-                                            {% for subtask in task.children %}
-                                                <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
-                                                    data-task-id="{{ subtask.id }}">
-                                                    <div class="subtask">
-                                                        <input class="form-check-input" value="" type="checkbox"
-                                                               id="subtask-{{ subtask.id }}-checkbox"
-                                                                {% if subtask.finished %} checked {% endif %}>
-                                                        <label class="form-check-label"
-                                                               for="subtask-{{ subtask.id }}-checkbox">
-                                                            {{ subtask.task_title }}
-                                                        </label>
-                                                        <div class="btn btn-sm pull-right collapse-btn"
-                                                             data-bs-toggle="collapse"
-                                                             data-bs-target="#subtask-{{ subtask.id }}-text"
-                                                             role="button"
-                                                             aria-expanded="false"
-                                                             aria-controls="subtask-{{ subtask.id }}-text">
-                                                            <i class="fa fa-arrow-down"></i>
+        <div class="col-sm-8 col-md-4 col-lg-2 custom-column">
+            <div class="panel-second panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">In Progress</h3>
+                </div>
+                <div class="panel-body" id="in-progress" data-panel-id="in-progress">
+                    {% for task in tasks %}
+                        {% if task.id_panel == "in-progress" %}
+                            <div class="task {% if  task.deadline_progress == 100 %} task-color-danger
+                                    {% elif task.deadline_progress < 50 %} task-color-primary
+                                    {% else %} task-color-warning {% endif %}"
+                                 draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
+                                <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
+                                     data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
+                                     aria-controls="task-{{ task.id }}-content">
+                                    <i class="fa fa-arrow-down"></i>
+                                </div>
+                                <h4 class="title text-left">{{ task.task_title }}</h4>
+                                <div class="collapse" id="task-{{ task.id }}-content">
+                                    <p class="text">{{ task.description }} </p>
+                                    <div class="progress-container">
+                                        <div class="{% if  task.deadline_progress == 100 %} progress-text-behind-deadline
+                                            {% elif task.deadline_progress < 50 %} progress-text-primary
+                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                            {% if task.deadline_progress == 100 %}
+                                                {{ task.time_left[0] }} days, {{ task.time_left[1] }} h,
+                                                {{ task.time_left[2] }} min late
+                                            {% else %}
+                                                {{ task.time_left[0] }} days, {{ task.time_left[1] }} h,
+                                                {{ task.time_left[2] }} min
+                                            {% endif %}
+                                        </div>
+                                        <div class="progress" role="progressbar" aria-label="Example with label"
+                                             aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar {% if task.deadline_progress < 50 %} bg-success
+                                            {% elif task.deadline_progress < 100 %} bg-warning {% else %} bg-danger {% endif %}"
+                                                 style="width: {{ task.deadline_progress }}%"></div>
+                                        </div>
+                                        <div class="task-deadline {% if  task.deadline_progress == 100 %} progress-text-behind-deadline
+                                            {% elif task.deadline_progress < 50 %} progress-text-primary
+                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                            DL: {{ task.deadline }}
+                                        </div>
+                                    </div>
+                                    <div class="subtasks" id="subtasks">
+                                        <form>
+                                            <ul class="subtask-list" id="subtask-list-{{ task.id }}">
+                                                {% for subtask in task.children %}
+                                                    <li class="subtask-list-item
+                                                            {% if  subtask.deadline_progress == 100 %} subtask-list-item-danger
+                                                            {% elif subtask.deadline_progress < 50 %} subtask-list-item-primary
+                                                            {% else %} subtask-list-item-warning {% endif %}"
+                                                        draggable="true" id="{{ subtask.id }}"
+                                                        data-task-id="{{ subtask.id }}">
+                                                        <div class="subtask">
+                                                            <input class="form-check-input" value="" type="checkbox"
+                                                                   id="subtask-{{ subtask.id }}-checkbox"
+                                                                    {% if subtask.finished %} checked {% endif %}>
+                                                            <label class="subtask-title form-check-label"
+                                                                   for="subtask-{{ subtask.id }}-checkbox">
+                                                                {{ subtask.task_title }}
+                                                            </label>
+                                                            <div class="btn btn-sm pull-right collapse-btn"
+                                                                 data-bs-toggle="collapse"
+                                                                 data-bs-target="#subtask-{{ subtask.id }}-text"
+                                                                 role="button"
+                                                                 aria-expanded="false"
+                                                                 aria-controls="subtask-{{ subtask.id }}-text">
+                                                                <i class="fa fa-arrow-down"></i>
+                                                            </div>
+                                                            <div class="collapse" id="subtask-{{ subtask.id }}-text">
+                                                                <p class="subtask-text text"> {{ subtask.description }} </p>
+                                                                <div class="subtask-progress-container">
+                                                                    <div class="{% if  subtask.deadline_progress == 100 %} progress-text-behind-deadline
+                                                                            {% elif subtask.deadline_progress < 50 %} progress-text-primary
+                                                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                                                        {% if subtask.deadline_progress == 100 %}
+                                                                            {{ subtask.time_left[0] }} days,
+                                                                            {{ subtask.time_left[1] }} h,
+                                                                            {{ subtask.time_left[2] }} min late
+                                                                        {% else %}
+                                                                            {{ subtask.time_left[0] }} days,
+                                                                            {{ subtask.time_left[1] }} h,
+                                                                            {{ subtask.time_left[2] }} min
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="progress" role="progressbar"
+                                                                         aria-label="Example with label"
+                                                                         aria-valuenow="25" aria-valuemin="0"
+                                                                         aria-valuemax="100">
+                                                                        <div class="progress-bar {% if subtask.deadline_progress < 50 %} bg-success
+                                                                                {% elif subtask.deadline_progress < 100 %} bg-warning
+                                                                                {% else %} bg-danger {% endif %}"
+                                                                             style="width: {{ subtask.deadline_progress }}%"></div>
+                                                                    </div>
+                                                                    <div class="subtask-deadline  {% if  subtask.deadline_progress == 100 %} progress-text-behind-deadline
+                                                                            {% elif subtask.deadline_progress < 50 %} progress-text-primary
+                                                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                                                        DL: {{ subtask.deadline }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="collapse" id="subtask-{{ subtask.id }}-text">
-                                                            <p class="subtask-text text"> {{ subtask.description }} </p>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </form>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endif %}
-                {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-sm-8 col-md-4 col-lg-2">
-        <div class="panel-third panel">
-            <div class="panel-heading">
-                <h3 class="panel-title text-center">Re-opened</h3>
-            </div>
-            <div class="panel-body" id="re-opened" data-panel-id="re-opened">
-                {% for task in tasks %}
-                    {% if task.id_panel == "re-opened" %}
-                        <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
-                            <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
-                                 data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
-                                 aria-controls="task-{{ task.id }}-content">
-                                <i class="fa fa-arrow-down"></i>
-                            </div>
-                            <h4 class="title text-left">{{ task.task_title }}</h4>
-                            <div class="collapse" id="task-{{ task.id }}-content">
-                                <p class="text">{{ task.description }} </p>
-                                <div class="subtasks" id="subtasks">
-                                    <form>
-                                        <ul class="subtask-list" id="subtask-list-{{ task.id }}">
-                                            {% for subtask in task.children %}
-                                                <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
-                                                    data-task-id="{{ subtask.id }}">
-                                                    <div class="subtask">
-                                                        <input class="form-check-input" value="" type="checkbox"
-                                                               id="subtask-{{ subtask.id }}-checkbox"
-                                                                {% if subtask.finished %} checked {% endif %}>
-                                                        <label class="form-check-label"
-                                                               for="subtask-{{ subtask.id }}-checkbox">
-                                                            {{ subtask.task_title }}
-                                                        </label>
-                                                        <div class="btn btn-sm pull-right collapse-btn"
-                                                             data-bs-toggle="collapse"
-                                                             data-bs-target="#subtask-{{ subtask.id }}-text"
-                                                             role="button"
-                                                             aria-expanded="false"
-                                                             aria-controls="subtask-{{ subtask.id }}-text">
-                                                            <i class="fa fa-arrow-down"></i>
+        <div class="col-sm-8 col-md-4 col-lg-2 custom-column">
+            <div class="panel-third panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">Re-opened</h3>
+                </div>
+                <div class="panel-body" id="re-opened" data-panel-id="re-opened">
+                    {% for task in tasks %}
+                        {% if task.id_panel == "re-opened" %}
+                            <div class="task {% if  task.deadline_progress == 100 %} task-color-danger
+                                    {% elif task.deadline_progress < 50 %} task-color-primary
+                                    {% else %} task-color-warning {% endif %}"
+                                 draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
+                                <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
+                                     data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
+                                     aria-controls="task-{{ task.id }}-content">
+                                    <i class="fa fa-arrow-down"></i>
+                                </div>
+                                <h4 class="title text-left">{{ task.task_title }}</h4>
+                                <div class="collapse" id="task-{{ task.id }}-content">
+                                    <p class="text">{{ task.description }} </p>
+                                    <div class="progress-container">
+                                        <div class="{% if  task.deadline_progress == 100 %} progress-text-behind-deadline
+                                            {% elif task.deadline_progress < 50 %} progress-text-primary
+                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                            {% if task.deadline_progress == 100 %}
+                                                {{ task.time_left[0] }} days, {{ task.time_left[1] }} h,
+                                                {{ task.time_left[2] }} min late
+                                            {% else %}
+                                                {{ task.time_left[0] }} days, {{ task.time_left[1] }} h,
+                                                {{ task.time_left[2] }} min
+                                            {% endif %}
+                                        </div>
+                                        <div class="progress" role="progressbar" aria-label="Example with label"
+                                             aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar {% if task.deadline_progress < 50 %} bg-success
+                                            {% elif task.deadline_progress < 100 %} bg-warning {% else %} bg-danger {% endif %}"
+                                                 style="width: {{ task.deadline_progress }}%"></div>
+                                        </div>
+                                        <div class="task-deadline {% if  task.deadline_progress == 100 %} progress-text-behind-deadline
+                                            {% elif task.deadline_progress < 50 %} progress-text-primary
+                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                            DL: {{ task.deadline }}
+                                        </div>
+                                    </div>
+                                    <div class="subtasks" id="subtasks">
+                                        <form>
+                                            <ul class="subtask-list" id="subtask-list-{{ task.id }}">
+                                                {% for subtask in task.children %}
+                                                    <li class="subtask-list-item
+                                                            {% if  subtask.deadline_progress == 100 %} subtask-list-item-danger
+                                                            {% elif subtask.deadline_progress < 50 %} subtask-list-item-primary
+                                                            {% else %} subtask-list-item-warning {% endif %}"
+                                                        draggable="true" id="{{ subtask.id }}"
+                                                        data-task-id="{{ subtask.id }}">
+                                                        <div class="subtask">
+                                                            <input class="form-check-input" value="" type="checkbox"
+                                                                   id="subtask-{{ subtask.id }}-checkbox"
+                                                                    {% if subtask.finished %} checked {% endif %}>
+                                                            <label class="subtask-title form-check-label"
+                                                                   for="subtask-{{ subtask.id }}-checkbox">
+                                                                {{ subtask.task_title }}
+                                                            </label>
+                                                            <div class="btn btn-sm pull-right collapse-btn"
+                                                                 data-bs-toggle="collapse"
+                                                                 data-bs-target="#subtask-{{ subtask.id }}-text"
+                                                                 role="button"
+                                                                 aria-expanded="false"
+                                                                 aria-controls="subtask-{{ subtask.id }}-text">
+                                                                <i class="fa fa-arrow-down"></i>
+                                                            </div>
+                                                            <div class="collapse" id="subtask-{{ subtask.id }}-text">
+                                                                <p class="subtask-text text"> {{ subtask.description }} </p>
+                                                                <div class="subtask-progress-container">
+                                                                    <div class="{% if  subtask.deadline_progress == 100 %} progress-text-behind-deadline
+                                                                            {% elif subtask.deadline_progress < 50 %} progress-text-primary
+                                                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                                                        {% if subtask.deadline_progress == 100 %}
+                                                                            {{ subtask.time_left[0] }} days,
+                                                                            {{ subtask.time_left[1] }} h,
+                                                                            {{ subtask.time_left[2] }} min late
+                                                                        {% else %}
+                                                                            {{ subtask.time_left[0] }} days,
+                                                                            {{ subtask.time_left[1] }} h,
+                                                                            {{ subtask.time_left[2] }} min
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="progress" role="progressbar"
+                                                                         aria-label="Example with label"
+                                                                         aria-valuenow="25" aria-valuemin="0"
+                                                                         aria-valuemax="100">
+                                                                        <div class="progress-bar {% if subtask.deadline_progress < 50 %} bg-success
+                                                                                {% elif subtask.deadline_progress < 100 %} bg-warning
+                                                                                {% else %} bg-danger {% endif %}"
+                                                                             style="width: {{ subtask.deadline_progress }}%"></div>
+                                                                    </div>
+                                                                    <div class="subtask-deadline {% if  subtask.deadline_progress == 100 %} progress-text-behind-deadline
+                                                                            {% elif subtask.deadline_progress < 50 %} progress-text-primary
+                                                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                                                        DL: {{ subtask.deadline }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="collapse" id="subtask-{{ subtask.id }}-text">
-                                                            <p class="subtask-text text"> {{ subtask.description }} </p>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </form>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endif %}
-                {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-sm-8 col-md-4 col-lg-2">
-        <div class="panel-fourth panel">
-            <div class="panel-heading">
-                <h3 class="panel-title text-center">In review</h3>
-            </div>
-            <div class="panel-body" id="in-review" data-panel-id="in-review">
-                {% for task in tasks %}
-                    {% if task.id_panel == "in-review" %}
-                        <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
-                            <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
-                                 data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
-                                 aria-controls="task-{{ task.id }}-content">
-                                <i class="fa fa-arrow-down"></i>
-                            </div>
-                            <h4 class="title text-left">{{ task.task_title }}</h4>
-                            <div class="collapse" id="task-{{ task.id }}-content">
-                                <p class="text">{{ task.description }} </p>
-                                <div class="subtasks" id="subtasks">
-                                    <form>
-                                        <ul class="subtask-list" id="subtask-list-{{ task.id }}">
-                                            {% for subtask in task.children %}
-                                                <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
-                                                    data-task-id="{{ subtask.id }}">
-                                                    <div class="subtask">
-                                                        <input class="form-check-input" value="" type="checkbox"
-                                                               id="subtask-{{ subtask.id }}-checkbox"
-                                                                {% if subtask.finished %} checked {% endif %}>
-                                                        <label class="form-check-label"
-                                                               for="subtask-{{ subtask.id }}-checkbox">
-                                                            {{ subtask.task_title }}
-                                                        </label>
-                                                        <div class="btn btn-sm pull-right collapse-btn"
-                                                             data-bs-toggle="collapse"
-                                                             data-bs-target="#subtask-{{ subtask.id }}-text"
-                                                             role="button"
-                                                             aria-expanded="false"
-                                                             aria-controls="subtask-{{ subtask.id }}-text">
-                                                            <i class="fa fa-arrow-down"></i>
+        <div class="col-sm-8 col-md-4 col-lg-2 custom-column">
+            <div class="panel-fourth panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">In review</h3>
+                </div>
+                <div class="panel-body" id="in-review" data-panel-id="in-review">
+                    {% for task in tasks %}
+                        {% if task.id_panel == "in-review" %}
+                            <div class="task {% if  task.deadline_progress == 100 %} task-color-danger
+                                    {% elif task.deadline_progress < 50 %} task-color-primary
+                                    {% else %} task-color-warning {% endif %}"
+                                 draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
+                                <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
+                                     data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
+                                     aria-controls="task-{{ task.id }}-content">
+                                    <i class="fa fa-arrow-down"></i>
+                                </div>
+                                <h4 class="title text-left">{{ task.task_title }}</h4>
+                                <div class="collapse" id="task-{{ task.id }}-content">
+                                    <p class="text">{{ task.description }} </p>
+                                    <div class="progress-container">
+                                        <div class="{% if  task.deadline_progress == 100 %} progress-text-behind-deadline
+                                            {% elif task.deadline_progress < 50 %} progress-text-primary
+                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                            {% if task.deadline_progress == 100 %}
+                                                {{ task.time_left[0] }} days, {{ task.time_left[1] }} h,
+                                                {{ task.time_left[2] }} min late
+                                            {% else %}
+                                                {{ task.time_left[0] }} days, {{ task.time_left[1] }} h,
+                                                {{ task.time_left[2] }} min
+                                            {% endif %}
+                                        </div>
+                                        <div class="progress" role="progressbar" aria-label="Example with label"
+                                             aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                                            <div class="progress-bar {% if task.deadline_progress < 50 %} bg-success
+                                            {% elif task.deadline_progress < 100 %} bg-warning {% else %} bg-danger {% endif %}"
+                                                 style="width: {{ task.deadline_progress }}%"></div>
+                                        </div>
+                                        <div class="task-deadline {% if  task.deadline_progress == 100 %} progress-text-behind-deadline
+                                            {% elif task.deadline_progress < 50 %} progress-text-primary
+                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                            DL: {{ task.deadline }}
+                                        </div>
+                                    </div>
+                                    <div class="subtasks" id="subtasks">
+                                        <form>
+                                            <ul class="subtask-list" id="subtask-list-{{ task.id }}">
+                                                {% for subtask in task.children %}
+                                                    <li class="subtask-list-item
+                                                            {% if  subtask.deadline_progress == 100 %} subtask-list-item-danger
+                                                            {% elif subtask.deadline_progress < 50 %} subtask-list-item-primary
+                                                            {% else %} subtask-list-item-warning {% endif %}"
+                                                        draggable="true" id="{{ subtask.id }}"
+                                                        data-task-id="{{ subtask.id }}">
+                                                        <div class="subtask">
+                                                            <input class="form-check-input" value="" type="checkbox"
+                                                                   id="subtask-{{ subtask.id }}-checkbox"
+                                                                    {% if subtask.finished %} checked {% endif %}>
+                                                            <label class="subtask-title form-check-label"
+                                                                   for="subtask-{{ subtask.id }}-checkbox">
+                                                                {{ subtask.task_title }}
+                                                            </label>
+                                                            <div class="btn btn-sm pull-right collapse-btn"
+                                                                 data-bs-toggle="collapse"
+                                                                 data-bs-target="#subtask-{{ subtask.id }}-text"
+                                                                 role="button"
+                                                                 aria-expanded="false"
+                                                                 aria-controls="subtask-{{ subtask.id }}-text">
+                                                                <i class="fa fa-arrow-down"></i>
+                                                            </div>
+                                                            <div class="collapse" id="subtask-{{ subtask.id }}-text">
+                                                                <p class="subtask-text text"> {{ subtask.description }} </p>
+                                                                <div class="subtask-progress-container">
+                                                                    <div class="{% if  subtask.deadline_progress == 100 %} progress-text-behind-deadline
+                                                                            {% elif subtask.deadline_progress < 50 %} progress-text-primary
+                                                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                                                        {% if subtask.deadline_progress == 100 %}
+                                                                            {{ subtask.time_left[0] }} days,
+                                                                            {{ subtask.time_left[1] }} h,
+                                                                            {{ subtask.time_left[2] }} min late
+                                                                        {% else %}
+                                                                            {{ subtask.time_left[0] }} days,
+                                                                            {{ subtask.time_left[1] }} h,
+                                                                            {{ subtask.time_left[2] }} min
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="progress" role="progressbar"
+                                                                         aria-label="Example with label"
+                                                                         aria-valuenow="25" aria-valuemin="0"
+                                                                         aria-valuemax="100">
+                                                                        <div class="progress-bar {% if subtask.deadline_progress < 50 %} bg-success
+                                                                                {% elif subtask.deadline_progress < 100 %} bg-warning
+                                                                                {% else %} bg-danger {% endif %}"
+                                                                             style="width: {{ subtask.deadline_progress }}%"></div>
+                                                                    </div>
+                                                                    <div class="subtask-deadline {% if  subtask.deadline_progress == 100 %} progress-text-behind-deadline
+                                                                            {% elif subtask.deadline_progress < 50 %} progress-text-primary
+                                                                            {% else %} progress-text-warning-deadline {% endif %}">
+                                                                        DL: {{ subtask.deadline }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="collapse" id="subtask-{{ subtask.id }}-text">
-                                                            <p class="subtask-text text"> {{ subtask.description }} </p>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </form>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endif %}
-                {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-sm-8 col-md-4 col-lg-2">
-        <div class="panel-fifth panel">
-            <div class="panel-heading">
-                <h3 class="panel-title text-center">Completed</h3>
-            </div>
-            <div class="panel-body" id="completed" data-panel-id="completed">
-                {% for task in tasks %}
-                    {% if task.id_panel == "completed" %}
-                        <div class="task" draggable="true" id="{{ task.id }}" data-task-id="{{ task.id }}">
-                            <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
-                                 data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
-                                 aria-controls="task-{{ task.id }}-content">
-                                <i class="fa fa-arrow-down"></i>
-                            </div>
-                            <h4 class="title text-left">{{ task.task_title }}</h4>
-                            <div class="collapse" id="task-{{ task.id }}-content">
-                                <p class="text">{{ task.description }} </p>
-                                <div class="subtasks" id="subtasks">
-                                    <form>
-                                        <ul class="subtask-list" id="subtask-list-{{ task.id }}">
-                                            {% for subtask in task.children %}
-                                                <li class="subtask-list-item" draggable="true" id="{{ subtask.id }}"
-                                                    data-task-id="{{ subtask.id }}">
-                                                    <div class="subtask">
-                                                        <input class="form-check-input" value="" type="checkbox"
-                                                               id="subtask-{{ subtask.id }}-checkbox"
-                                                                {% if subtask.finished %} checked {% endif %}>
-                                                        <label class="form-check-label"
-                                                               for="subtask-{{ subtask.id }}-checkbox">
-                                                            {{ subtask.task_title }}
-                                                        </label>
-                                                        <div class="btn btn-sm pull-right collapse-btn"
-                                                             data-bs-toggle="collapse"
-                                                             data-bs-target="#subtask-{{ subtask.id }}-text"
-                                                             role="button"
-                                                             aria-expanded="false"
-                                                             aria-controls="subtask-{{ subtask.id }}-text">
-                                                            <i class="fa fa-arrow-down"></i>
+        <div class="col-sm-8 col-md-4 col-lg-2 custom-column">
+            <div class="panel-fifth panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">Completed</h3>
+                </div>
+                <div class="panel-body" id="completed" data-panel-id="completed">
+                    {% for task in tasks %}
+                        {% if task.id_panel == "completed" %}
+                            <div class="task task-color-success" draggable="true" id="{{ task.id }}"
+                                 data-task-id="{{ task.id }}">
+                                <div class="btn btn-sm pull-right collapse-btn" data-bs-toggle="collapse"
+                                     data-bs-target="#task-{{ task.id }}-content" role="button" aria-expanded="false"
+                                     aria-controls="task-{{ task.id }}-content">
+                                    <i class="fa fa-arrow-down"></i>
+                                </div>
+                                <h4 class="title text-left">{{ task.task_title }}</h4>
+                                <div class="collapse" id="task-{{ task.id }}-content">
+                                    <p class="text">{{ task.description }} </p>
+                                    <div class="progress-container">
+                                        <div class="task-deadline progress-text-success">
+                                            DL: {{ task.deadline }}
+                                        </div>
+                                    </div>
+                                    <div class="subtasks" id="subtasks">
+                                        <form>
+                                            <ul class="subtask-list" id="subtask-list-{{ task.id }}">
+                                                {% for subtask in task.children %}
+                                                    <li class="subtask-list-item subtask-list-item-success"
+                                                        draggable="true" id="{{ subtask.id }}"
+                                                        data-task-id="{{ subtask.id }}">
+                                                        <div class="subtask">
+                                                            <input class="form-check-input" value="" type="checkbox"
+                                                                   id="subtask-{{ subtask.id }}-checkbox"
+                                                                    {% if subtask.finished %} checked {% endif %}>
+                                                            <label class="subtask-title form-check-label"
+                                                                   for="subtask-{{ subtask.id }}-checkbox">
+                                                                {{ subtask.task_title }}
+                                                            </label>
+                                                            <div class="btn btn-sm pull-right collapse-btn"
+                                                                 data-bs-toggle="collapse"
+                                                                 data-bs-target="#subtask-{{ subtask.id }}-text"
+                                                                 role="button"
+                                                                 aria-expanded="false"
+                                                                 aria-controls="subtask-{{ subtask.id }}-text">
+                                                                <i class="fa fa-arrow-down"></i>
+                                                            </div>
+                                                            <div class="collapse" id="subtask-{{ subtask.id }}-text">
+                                                                <p class="subtask-text text"> {{ subtask.description }} </p>
+                                                                <div class="subtask-progress-container">
+                                                                    <div class="subtask-deadline progress-text-success">
+                                                                        DL: {{ subtask.deadline }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="collapse" id="subtask-{{ subtask.id }}-text">
-                                                            <p class="subtask-text text"> {{ subtask.description }} </p>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            {% endfor %}
-                                        </ul>
-                                    </form>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endif %}
-                {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteUserModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteTaskModalLabel">Confirm task deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete the task: <span style="color: red"
+                                                                    id="deleteItemTitle"></span> ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteTaskBtn">Confirm</button>
+                </div>
             </div>
         </div>
     </div>

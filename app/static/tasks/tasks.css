@@ -6,8 +6,23 @@ h1, h2, h3, h4, h5, h6, .btn {
     padding: 10px;
     margin: 20px 0;
     border: 1px solid #eee;
-    border-left-width: 5px;
+    border-left-width: 8px;
     border-radius: 3px;
+}
+.task-color-success {
+    border-left-color: #999;
+}
+
+.task-color-primary {
+    border-left-color: #208454;
+}
+
+.task-color-warning {
+    border-left-color: #ffc404;
+}
+
+.task-color-danger {
+    border-left-color: #e03444;
 }
 
 .task h4 {
@@ -87,6 +102,7 @@ h1, h2, h3, h4, h5, h6, .btn {
 
 .subtask {
     color: #f7f0f0;
+    width: 100%;
 }
 
 .subtask-list-item {
@@ -98,8 +114,43 @@ h1, h2, h3, h4, h5, h6, .btn {
     margin-top: 8px;
 }
 
-ul {
-    color: darkred;
+.subtask-list {
+    list-style-type: none;
+}
+
+.subtask-list li::before {
+    content: '➤';
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.subtask-list-item-primary {
+    color: #208454;
+    display: flex;
+    align-items: flex-start;
+}
+
+.subtask-list-item-success {
+    color: #999;
+    display: flex;
+    align-items: flex-start;
+}
+
+.subtask-list-item-warning{
+    color: #ffc404;
+    display: flex;
+    align-items: flex-start;
+}
+
+.subtask-list-item-danger {
+    color: #e03444;
+    display: flex;
+    align-items: flex-start;
+
+}
+
+.form-check-label {
+    align-items: center;
 }
 
 .navbar {
@@ -171,4 +222,41 @@ button:hover, button:focus {
 
 .panel-body {
     min-height: 50px;
+}
+
+.progress-container {
+    margin-bottom: 20px;
+}
+
+.progress {
+    margin-bottom: 2px;
+    margin-top: 2px;
+}
+
+.progress-text-primary {
+    text-align: center;
+    color: darkgreen;
+}
+
+.progress-text-success {
+    text-align: center;
+    color: #999;
+}
+
+.progress-text-warning-deadline {
+    text-align: center;
+    color: darkgoldenrod;
+}
+
+.progress-text-behind-deadline {
+    text-align: center;
+    color: darkred;
+}
+
+/* Custom col width for lg*/
+@media (min-width: 992px) {  /* lg breakpoint in Bootstrap 4 and 5 */
+    .custom-column {
+        flex: 0 0 20%;
+        max-width: 20%;
+    }
 }

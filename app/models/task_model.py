@@ -1,6 +1,6 @@
 from app.extensions import db
 from datetime import datetime
-
+import pytz
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -28,9 +28,38 @@ class Task(db.Model):
         else:
             raise ValueError("Either id_panel or parent_id must be provided when creating a Task")
 
+    @property
+    def time_left(self):
+        local_tz = pytz.timezone('Europe/Warsaw')
+        local_time = datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(local_tz).replace(tzinfo=None)
+        delta = self.deadline - local_time
+
+        if delta.total_seconds() < 0:
+            delta = abs(delta)
+
+
+        days = delta.days
+        hours, remainder = divmod(delta.seconds, 3600)
+        minutes, _ = divmod(remainder, 60)
+
+        return days, hours, minutes
+
+    @property
+    def deadline_progress(self):
+        local_tz = pytz.timezone('Europe/Warsaw')
+        local_time = datetime.utcnow().replace(tzinfo=pytz.utc).astimezone(local_tz).replace(tzinfo=None)
+        total_duration = self.deadline - self.created_at
+        time_elapsed = local_time - self.created_at
+        progress_percentage = (time_elapsed / total_duration) * 100
+
+        if time_elapsed.total_seconds() >= total_duration.total_seconds():
+            return 100
+
+        return max(0, min(100, progress_percentage))
+
     @staticmethod
-    def get_tasks_list(project_id):
-        tasks = Task.query.filter_by(project_id=project_id).order_by(Task.position).all()
+    def get_main_tasks_list(project_id):
+        tasks = Task.query.filter_by(project_id=project_id).filter(Task.id_panel != None).order_by(Task.position).all()
         return tasks
 
     @staticmethod
