@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, flash, session, request, jsonify, redirect, url_for
+from flask import Blueprint, render_template, flash, session, request, jsonify, redirect, url_for, current_app
 from flask_login import login_required, current_user
+from flask_socketio import join_room, leave_room
 from app.models.task_model import Task
 from app.models.auth_model import User
 from app.models.project_model import Project
@@ -80,7 +81,7 @@ def add_task():
                 'time_left': subtask.time_left
             } for subtask in new_task.children
         ]
-    })
+    }, to='tasks_' + str(session.get('project_id')))
 
     return jsonify({'status': 'success', 'message': 'Task added successfully'})
 
@@ -104,7 +105,8 @@ def update_order():
     if panel_id == None:
         panel_id = Task.query.get(order[0]).parent_id
 
-    socketio.emit('task_reordered', {'order': order, 'panel_id': panel_id, 'is_subtask_update': is_subtask_update})
+    socketio.emit('task_reordered', {'order': order, 'panel_id': panel_id, 'is_subtask_update': is_subtask_update},
+                  to='tasks_' + str(session.get('project_id')))
 
     return jsonify({"message": "Success"}), 200
 
@@ -118,7 +120,8 @@ def update_task_panel():
     if task:
         task.id_panel = panel_id
         db.session.commit()
-        socketio.emit('task_moved', {'task_id': task_id, 'panel_id': panel_id})
+        socketio.emit('task_moved', {'task_id': task_id, 'panel_id': panel_id},
+                      to='tasks_' + str(session.get('project_id')))
 
     return "Success", 200
 
@@ -138,7 +141,7 @@ def delete_task():
 
     db.session.delete(task)
     db.session.commit()
-    socketio.emit('delete_task', {'task_id': task_id})
+    socketio.emit('delete_task', {'task_id': task_id}, to='tasks_' + str(session.get('project_id')))
     return jsonify({"status": "success", "message": "Task deleted successfully."}), 200
 
 
@@ -168,8 +171,8 @@ def delete_user_from_project():
     if project in user.projects:
         user.projects.remove(project)
         db.session.commit()
-        socketio.emit('user_removed', {'username': username})
-        socketio.emit('removed_from_project', room=user.id)
+        socketio.emit('user_removed', {'username': username}, to='tasks_' + str(session.get('project_id')))
+        socketio.emit('removed_from_project', room=user.id, to='tasks_' + str(session.get('project_id')))
         return jsonify({"status": "success", "message": "User removed from project"})
 
     return jsonify({"status": "error", "message": "Project was not associated with user"})
@@ -197,7 +200,7 @@ def add_user_to_project():
     user.projects.append(project)
     db.session.commit()
 
-    socketio.emit('user_added', {'username': user.username})
+    socketio.emit('user_added', {'username': user.username}, to='tasks_' + str(session.get('project_id')))
     return jsonify({"status": "success", "message": "User added successfully", "username": user.username})
 
 
@@ -227,7 +230,8 @@ def update_task_status():
 
         task.finished = finished
         db.session.commit()
-        socketio.emit('task_status_updated', {'task_id': task_id, 'finished': finished})
+        socketio.emit('task_status_updated', {'task_id': task_id, 'finished': finished},
+                      to='tasks_' + str(session.get('project_id')))
         return jsonify(status='success', message='Task updated successfully!')
 
     except Exception as e:
@@ -251,7 +255,7 @@ def mark_all_completed():
         subtask.finished = True
 
     db.session.commit()
-    socketio.emit('task_moved_to_completed', {'task_id': task_id})
+    socketio.emit('task_moved_to_completed', {'task_id': task_id}, to='tasks_' + str(session.get('project_id')))
 
     return jsonify({'status': 'success', 'message': 'Task and subtasks marked as finished'}), 200
 
@@ -271,7 +275,7 @@ def mark_task_unfinished():
     task.finished = False
     db.session.commit()
 
-    socketio.emit('task_moved_from_completed', {'task_id': task_id})
+    socketio.emit('task_moved_from_completed', {'task_id': task_id}, to='tasks_' + str(session.get('project_id')))
     return jsonify(status='success', message='Task marked as unfinished')
 
 
@@ -288,3 +292,24 @@ def get_task_data():
 
     deadline_progress = task.deadline_progress
     return jsonify({"time_left": time_left, "deadline_progress": deadline_progress}), 200
+
+
+@socketio.on('connect')
+@login_required
+def on_join(data):
+    room = 'tasks_' + str(session.get('project_id'))
+    if room:
+        join_room(room)
+        current_app.logger.info("Successfully joined room: " + room)
+    else:
+        current_app.logger.error("Failed to join room: " + room + ".No project_id in session.")
+
+
+@socketio.on('disconnect')
+def on_disconnect():
+    room = 'tasks_' + str(session.get('project_id'))
+    if room:
+        leave_room(room)
+        current_app.logger.info("Successfully left room: " + room)
+    else:
+        current_app.logger.error("Failed to leave room: " + room + ".No project_id in session.")
