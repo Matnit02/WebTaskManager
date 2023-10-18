@@ -2,13 +2,13 @@ $(document).ready(function () {
     let completedTasks = 0;
     let otherTasks = 0;
 
-    if (dataFromPython['completed']) {
-        completedTasks += dataFromPython['completed'].main_tasks + dataFromPython['completed'].subtasks;
+    if (taskCountByPanel['completed']) {
+        completedTasks += taskCountByPanel['completed'].main_tasks + taskCountByPanel['completed'].subtasks;
     }
 
     $.each(panelIds, function (index, panelId) {
         if (panelId !== 'completed') {
-            otherTasks += dataFromPython[panelId].main_tasks + dataFromPython[panelId].subtasks;
+            otherTasks += taskCountByPanel[panelId].main_tasks + taskCountByPanel[panelId].subtasks;
         }
     });
 
@@ -40,19 +40,19 @@ $(document).ready(function () {
         size: {
             height: 180
         },
-        bindto: "#donut-chart-1",
+        bindto: "#chart-1",
     });
 });
 
 $(document).ready(function () {
     let totalTasks = 0;
     $.each(panelIds, function (index, panelId) {
-        totalTasks += dataFromPython[panelId].main_tasks + dataFromPython[panelId].subtasks;
+        totalTasks += taskCountByPanel[panelId].main_tasks + taskCountByPanel[panelId].subtasks;
     });
     let totalTasksString = totalTasks.toString();
 
     let columns = panelIds.map(function (panelId) {
-        return [panelId, dataFromPython[panelId].main_tasks + dataFromPython[panelId].subtasks];
+        return [panelId, taskCountByPanel[panelId].main_tasks + taskCountByPanel[panelId].subtasks];
     });
 
     let chart = bb.generate({
@@ -62,8 +62,13 @@ $(document).ready(function () {
         },
         donut: {
             title: "Total tasks: " + totalTasksString,
+            label: {
+                format: (value, ratio, id) => {
+                    return value;
+                }
+            }
         },
-        bindto: "#donut-chart-2",
+        bindto: "#chart-2",
     });
 });
 
@@ -71,13 +76,13 @@ $(document).ready(function () {
     let completedTasks = 0;
     let otherTasks = 0;
 
-    if (dataFromPython['completed']) {
-        completedTasks += dataFromPython['completed'].main_tasks;
+    if (taskCountByPanel['completed']) {
+        completedTasks += taskCountByPanel['completed'].main_tasks;
     }
 
     $.each(panelIds, function (index, panelId) {
         if (panelId !== 'completed') {
-            otherTasks += dataFromPython[panelId].main_tasks;
+            otherTasks += taskCountByPanel[panelId].main_tasks;
         }
     });
 
@@ -109,19 +114,19 @@ $(document).ready(function () {
         size: {
             height: 180
         },
-        bindto: "#donut-chart-3",
+        bindto: "#chart-3",
     });
 });
 
 $(document).ready(function () {
     let totalTasks = 0;
     $.each(panelIds, function (index, panelId) {
-        totalTasks += dataFromPython[panelId].main_tasks;
+        totalTasks += taskCountByPanel[panelId].main_tasks;
     });
     let totalTasksString = totalTasks.toString();
 
     let columns = panelIds.map(function (panelId) {
-        return [panelId, dataFromPython[panelId].main_tasks];
+        return [panelId, taskCountByPanel[panelId].main_tasks];
     });
 
     let chart = bb.generate({
@@ -131,8 +136,13 @@ $(document).ready(function () {
         },
         donut: {
             title: "Total main tasks: " + totalTasksString,
+            label: {
+                format: (value, ratio, id) => {
+                    return value;
+                }
+            }
         },
-        bindto: "#donut-chart-4",
+        bindto: "#chart-4",
     });
 });
 
@@ -140,13 +150,13 @@ $(document).ready(function () {
     let completedTasks = 0;
     let otherTasks = 0;
 
-    if (dataFromPython['completed']) {
-        completedTasks += dataFromPython['completed'].subtasks;
+    if (taskCountByPanel['completed']) {
+        completedTasks += taskCountByPanel['completed'].subtasks;
     }
 
     $.each(panelIds, function (index, panelId) {
         if (panelId !== 'completed') {
-            otherTasks += dataFromPython[panelId].subtasks;
+            otherTasks += taskCountByPanel[panelId].subtasks;
         }
     });
 
@@ -178,19 +188,19 @@ $(document).ready(function () {
         size: {
             height: 180
         },
-        bindto: "#donut-chart-5",
+        bindto: "#chart-5",
     });
 });
 
 $(document).ready(function () {
     let totalTasks = 0;
     $.each(panelIds, function (index, panelId) {
-        totalTasks += dataFromPython[panelId].subtasks;
+        totalTasks += taskCountByPanel[panelId].subtasks;
     });
     let totalTasksString = totalTasks.toString();
 
     let columns = panelIds.map(function (panelId) {
-        return [panelId, dataFromPython[panelId].subtasks];
+        return [panelId, taskCountByPanel[panelId].subtasks];
     });
 
     let chart = bb.generate({
@@ -200,7 +210,243 @@ $(document).ready(function () {
         },
         donut: {
             title: "Total subtasks: " + totalTasksString,
+            label: {
+                format: (value, ratio, id) => {
+                    return value;
+                }
+            }
         },
-        bindto: "#donut-chart-6",
+        bindto: "#chart-6",
+    });
+});
+
+$(document).ready(function () {
+    let delayedTasks = 0;
+    let allTasks = 0;
+
+    $.each(panelIds, function (index, panelId) {
+        if (panelId !== 'completed') {
+            delayedTasks += delayedTasksByPanel[panelId].main_tasks + delayedTasksByPanel[panelId].subtasks;
+            allTasks += delayedTasksByPanel[panelId].main_tasks + delayedTasksByPanel[panelId].subtasks;
+        } else {
+            allTasks += delayedTasksByPanel[panelId].main_tasks + delayedTasksByPanel[panelId].subtasks;
+        }
+    });
+
+    let chart = bb.generate({
+        data: {
+            columns: [
+                ["On time", (allTasks - delayedTasks) * 100 / allTasks],
+            ],
+            type: "gauge",
+        },
+        gauge: {},
+        color: {
+            pattern: [
+                "#FF0000",
+                "#F97600",
+                "#F6C600",
+                "#60B044"
+            ],
+            threshold: {
+                values: [
+                    30,
+                    60,
+                    90,
+                    100
+                ]
+            }
+        },
+        size: {
+            height: 180
+        },
+        bindto: "#chart-7",
+    });
+});
+
+$(document).ready(function () {
+    let totalTasks = 0;
+    $.each(panelIds, function (index, panelId) {
+        if (panelId !== 'completed') {
+            totalTasks += delayedTasksByPanel[panelId].main_tasks + delayedTasksByPanel[panelId].subtasks;
+        }
+    });
+    let totalTasksString = totalTasks.toString();
+
+    let columns = panelIds
+        .filter(function (panelId) {
+            return panelId !== 'completed';
+        })
+        .map(function (panelId) {
+            return [panelId, delayedTasksByPanel[panelId].main_tasks + delayedTasksByPanel[panelId].subtasks];
+        });
+
+    let chart = bb.generate({
+        data: {
+            columns: columns,
+            type: "pie"
+        },
+        pie: {
+            label: {
+                format: (value, ratio, id) => {
+                    return value;
+                }
+            }
+        },
+        bindto: "#chart-8",
+    });
+});
+
+$(document).ready(function () {
+    let delayedTasks = 0;
+    let allTasks = 0;
+
+    $.each(panelIds, function (index, panelId) {
+        if (panelId !== 'completed') {
+            delayedTasks += delayedTasksByPanel[panelId].main_tasks;
+            allTasks += delayedTasksByPanel[panelId].main_tasks;
+        } else {
+            allTasks += delayedTasksByPanel[panelId].main_tasks;
+        }
+    });
+
+    let chart = bb.generate({
+        data: {
+            columns: [
+                ["On time", (allTasks - delayedTasks) * 100 / allTasks],
+            ],
+            type: "gauge",
+        },
+        gauge: {},
+        color: {
+            pattern: [
+                "#FF0000",
+                "#F97600",
+                "#F6C600",
+                "#60B044"
+            ],
+            threshold: {
+                values: [
+                    30,
+                    60,
+                    90,
+                    100
+                ]
+            }
+        },
+        size: {
+            height: 180
+        },
+        bindto: "#chart-9",
+    });
+});
+
+$(document).ready(function () {
+    let totalTasks = 0;
+    $.each(panelIds, function (index, panelId) {
+        if (panelId !== 'completed') {
+            totalTasks += delayedTasksByPanel[panelId].main_tasks;
+        }
+    });
+    let totalTasksString = totalTasks.toString();
+
+    let columns = panelIds
+        .filter(function (panelId) {
+            return panelId !== 'completed';
+        })
+        .map(function (panelId) {
+            return [panelId, delayedTasksByPanel[panelId].main_tasks];
+        });
+
+    let chart = bb.generate({
+        data: {
+            columns: columns,
+            type: "pie"
+        },
+        pie: {
+            label: {
+                format: (value, ratio, id) => {
+                    return value;
+                }
+            }
+        },
+        bindto: "#chart-10",
+    });
+});
+
+$(document).ready(function () {
+    let delayedTasks = 0;
+    let allTasks = 0;
+
+    $.each(panelIds, function (index, panelId) {
+        if (panelId !== 'completed') {
+            delayedTasks += delayedTasksByPanel[panelId].subtasks;
+            allTasks += delayedTasksByPanel[panelId].subtasks;
+        } else {
+            allTasks += delayedTasksByPanel[panelId].subtasks;
+        }
+    });
+
+    let chart = bb.generate({
+        data: {
+            columns: [
+                ["On time", (allTasks - delayedTasks) * 100 / allTasks],
+            ],
+            type: "gauge",
+        },
+        gauge: {},
+        color: {
+            pattern: [
+                "#FF0000",
+                "#F97600",
+                "#F6C600",
+                "#60B044"
+            ],
+            threshold: {
+                values: [
+                    30,
+                    60,
+                    90,
+                    100
+                ]
+            }
+        },
+        size: {
+            height: 180
+        },
+        bindto: "#chart-11",
+    });
+});
+
+$(document).ready(function () {
+    let totalTasks = 0;
+    $.each(panelIds, function (index, panelId) {
+        if (panelId !== 'completed') {
+            totalTasks += delayedTasksByPanel[panelId].subtasks;
+        }
+    });
+    let totalTasksString = totalTasks.toString();
+
+    let columns = panelIds
+        .filter(function (panelId) {
+            return panelId !== 'completed';
+        })
+        .map(function (panelId) {
+            return [panelId, delayedTasksByPanel[panelId].subtasks];
+        });
+
+    let chart = bb.generate({
+        data: {
+            columns: columns,
+            type: "pie"
+        },
+        pie: {
+            label: {
+                format: (value, ratio, id) => {
+                    return value;
+                }
+            }
+        },
+        bindto: "#chart-12",
     });
 });

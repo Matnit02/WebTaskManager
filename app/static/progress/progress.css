@@ -1,6 +1,6 @@
 .first-panel {
     background-color: #f7f0f0 !important;
-    margin-right: 500px !important;
+    margin-right: 25vw !important;
     margin-bottom: 100px !important;
     border: 1px solid #f7f0f0 !important;
 }
@@ -17,9 +17,14 @@
 
 .second-panel {
     background-color: #f7f0f0 !important;
-    margin-left: 500px !important;
+    margin-left: 25vw !important;
     margin-bottom: 100px !important;
     border: 1px solid #f7f0f0 !important;
+}
+
+.chart {
+    width: 60%;
+    margin: 0 auto !important;
 }
 
 .intermediate-panel {

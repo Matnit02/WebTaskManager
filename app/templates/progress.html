@@ -17,7 +17,8 @@
 
     <script>
         let panelIds = {{ all_panel_ids | tojson | safe }};
-        let dataFromPython = {{ counts_by_panel | tojson | safe }};
+        let taskCountByPanel = {{ counts_by_panel | tojson | safe }};
+        let delayedTasksByPanel = {{ delayed_count_by_panels | tojson | safe }};
     </script>
 {% endblock %}
 
@@ -29,7 +30,7 @@
                     <h1> How you're <br> currently doing: </h1>
                 </div>
                 <div class="col lg-6 text-center">
-                    <div id="donut-chart-1"></div>
+                    <div class="chart" id="chart-1"></div>
                 </div>
             </div>
         </div>
@@ -37,11 +38,35 @@
     <div class="container-fluid">
         <div class="second-panel rounded-pill">
             <div class="row">
-                <div class="col lg-6 text-center">
-                    <div id="donut-chart-2"></div>
+                <div class="col lg-10 text-center">
+                    <div class="chart" id="chart-2"></div>
                 </div>
-                <div class="col lg-6 text-center d-flex justify-content-center align-items-center custom-text">
+                <div class="col lg-2 text-center d-flex justify-content-center align-items-center custom-text">
                     <h1> Project <br> structure </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="first-panel rounded-pill">
+            <div class="row">
+                <div class="col lg-6 text-center d-flex justify-content-center align-items-center custom-text">
+                    <h1> Is everything going <br> according to plan? </h1>
+                </div>
+                <div class="col lg-6 text-center">
+                    <div class="chart" id="chart-7"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="second-panel rounded-pill">
+            <div class="row">
+                <div class="col lg-10 text-center">
+                    <div class="chart" id="chart-8"></div>
+                </div>
+                <div class="col lg-2 text-center d-flex justify-content-center align-items-center custom-text">
+                    <h1> Where are you <br> after the deadline? </h1>
                 </div>
             </div>
         </div>
@@ -62,7 +87,7 @@
                     <h1> What's your <br> progress: </h1>
                 </div>
                 <div class="col lg-6 text-center">
-                    <div id="donut-chart-3"></div>
+                    <div class="chart" id="chart-3"></div>
                 </div>
             </div>
         </div>
@@ -71,10 +96,34 @@
         <div class="second-panel rounded-pill">
             <div class="row">
                 <div class="col lg-6 text-center">
-                    <div id="donut-chart-4"></div>
+                    <div class="chart" id="chart-4"></div>
                 </div>
                 <div class="col lg-6 text-center d-flex justify-content-center align-items-center custom-text">
                     <h1> How it's <br> divided </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="first-panel rounded-pill">
+            <div class="row">
+                <div class="col lg-6 text-center d-flex justify-content-center align-items-center custom-text">
+                    <h1> Are you <br> on time? </h1>
+                </div>
+                <div class="col lg-6 text-center">
+                    <div class="chart" id="chart-9"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="second-panel rounded-pill">
+            <div class="row">
+                <div class="col lg-10 text-center">
+                    <div class="chart" id="chart-10"></div>
+                </div>
+                <div class="col lg-2 text-center d-flex justify-content-center align-items-center custom-text">
+                    <h1> Where are delayed <br> tasks located? </h1>
                 </div>
             </div>
         </div>
@@ -95,7 +144,7 @@
                     <h1> That's how <br> it looks: </h1>
                 </div>
                 <div class="col lg-6 text-center">
-                    <div id="donut-chart-5"></div>
+                    <div class="chart" id="chart-5"></div>
                 </div>
             </div>
         </div>
@@ -104,10 +153,34 @@
         <div class="second-panel rounded-pill">
             <div class="row">
                 <div class="col lg-6 text-center">
-                    <div id="donut-chart-6"></div>
+                    <div class="chart" id="chart-6"></div>
                 </div>
                 <div class="col lg-6 text-center d-flex justify-content-center align-items-center custom-text">
                     <h1> And there you <br> have their structure </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="first-panel rounded-pill">
+            <div class="row">
+                <div class="col lg-6 text-center d-flex justify-content-center align-items-center custom-text">
+                    <h1> Is everything going <br> as intended? </h1>
+                </div>
+                <div class="col lg-6 text-center">
+                    <div class="chart" id="chart-11"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="second-panel rounded-pill">
+            <div class="row">
+                <div class="col lg-10 text-center">
+                    <div class="chart" id="chart-12"></div>
+                </div>
+                <div class="col lg-2 text-center d-flex justify-content-center align-items-center custom-text">
+                    <h1> Where will you <br> be post-deadline </h1>
                 </div>
             </div>
         </div>

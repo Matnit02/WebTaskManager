@@ -2,6 +2,7 @@ from app.extensions import db
 from datetime import datetime
 import pytz
 
+
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_owner = db.Column(db.Integer, nullable=False)
@@ -36,7 +37,6 @@ class Task(db.Model):
 
         if delta.total_seconds() < 0:
             delta = abs(delta)
-
 
         days = delta.days
         hours, remainder = divmod(delta.seconds, 3600)
@@ -88,3 +88,21 @@ class Task(db.Model):
         panel_ids = [item[0] for item in panel_ids_query.all()]
 
         return panel_ids
+
+    @staticmethod
+    def get_delayed_tasks(project_id):
+        delayed_count_by_panels = {}
+
+        main_tasks = Task.query.filter(Task.project_id == project_id, Task.parent_id == None).all()
+        for task in main_tasks:
+            if task.id_panel not in delayed_count_by_panels:
+                delayed_count_by_panels[task.id_panel] = {"main_tasks": 0, "subtasks": 0}
+
+            if task.deadline_progress == 100:
+                delayed_count_by_panels[task.id_panel]["main_tasks"] += 1
+
+            for subtask in task.children:
+                if subtask.deadline_progress == 100:
+                    delayed_count_by_panels[task.id_panel]["subtasks"] += 1
+
+        return delayed_count_by_panels
