@@ -1,4 +1,4 @@
-from app.extensions import db
+from WebTaskManager.extensions import db
 
 
 class Project(db.Model):

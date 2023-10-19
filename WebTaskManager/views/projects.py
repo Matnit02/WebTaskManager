@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, session, request, jsonify, flash, redirect, url_for
 from flask_login import login_required, current_user
-from app.models.auth_model import User
-from app.models.project_model import Project
+from WebTaskManager.models.auth_model import User
+from WebTaskManager.models.project_model import Project
 
 projects = Blueprint('projects', __name__)
 

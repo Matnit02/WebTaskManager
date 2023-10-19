@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, flash, session, request, jsonify, redirect, url_for, current_app
 from flask_login import login_required, current_user
 from flask_socketio import join_room, leave_room
-from app.models.task_model import Task
-from app.models.auth_model import User
-from app.models.project_model import Project
-from app.extensions import db, socketio
+from WebTaskManager.models.task_model import Task
+from WebTaskManager.models.auth_model import User
+from WebTaskManager.models.project_model import Project
+from WebTaskManager.extensions import db, socketio
 from datetime import datetime
 import pytz
 

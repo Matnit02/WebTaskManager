@@ -1,4 +1,4 @@
-from app.extensions import db
+from WebTaskManager.extensions import db
 from datetime import datetime
 import pytz
 

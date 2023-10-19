@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import logout_user, login_user, current_user
 from re import match
-from app.extensions import db, bcrypt, login_manager
-from app.models.auth_model import User
+from WebTaskManager.extensions import db, bcrypt, login_manager
+from WebTaskManager.models.auth_model import User
 
 auth = Blueprint('auth', __name__)
 

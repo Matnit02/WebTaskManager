@@ -1,6 +1,6 @@
 from flask import Blueprint, session, render_template
 from flask_login import login_required
-from app.models.task_model import Task
+from WebTaskManager.models.task_model import Task
 
 progress = Blueprint('progress', __name__)
 
