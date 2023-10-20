@@ -34,7 +34,6 @@ python run.py
 ## 👀 Quick Look
 <details open>
   <summary>📸 Take a quick look at some samples</summary>
-
   <p align="center">
     <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/tasks.png"/>
 &nbsp;
@@ -52,8 +51,36 @@ python run.py
 &nbsp;
     <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/register.png">
 </p>
-
 </details>
+
+## 🌟 Features
+
+WebTaskManager offers an array of features tailored to help you manage your tasks and projects. Here's a snapshot of what you can achieve:
+
+### User Authentication
+- **Login**: Securely log into the application.
+- **Register**: Sign up with an email and start your journey.
+
+### Project Management
+- **Independent Projects**: Create multiple projects, each with its own unique set of tasks.
+- **User Collaboration**: 
+  - **Add Users**: Invite other users to collaborate on a project via their email.
+  - **Remove Users**: If needed, you have the ability to delete users from a project.
+  
+### Task Management
+- **Interactive Task View**: A task view with drag-and-drop functionality, making task management fun and easy.
+- **Detailed Task Elements**: Each task comes with:
+  - **Description**: Detailed information about the task.
+  - **Deadline Bar Visualization**: Easily glance at the urgency of a task.
+  - **Subtasks**: Each subtask behaves like a main task, with its own elements.
+- **Task Operations**: 
+  - **Add New Tasks**: Populate your projects with all the tasks you need.
+  - **Delete Tasks**: Remove tasks that are no longer required.
+  
+### Progress Analytics
+- **Task Breakdown Charts**: Understand the structure of your project.
+- **Completion Status**: View the number of tasks you've successfully completed.
+- **Deadline Tracker**: Gain insights on tasks that are on schedule and those lagging behind the deadline.
 
 ## 👏 Acknowledgements
 - [Flask](https://flask.palletsprojects.com/en/3.0.x/): Benefitted from its friendly documentation when starting to learn Flask.
