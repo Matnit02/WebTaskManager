@@ -36,21 +36,21 @@ python run.py
   <summary>📸 Take a quick look at some samples</summary>
 
   <p align="center">
-    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/assets/105448362/19360622-7048-4c93-8062-10e4249d61f7"/>
+    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/tasks.png"/>
 &nbsp;
-    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/assets/105448362/de7a58b8-f065-4daf-b655-7f438f724d1c"/>
+    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/new_task.png"/>
 </p>
 
 <p align="center">
-    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/assets/105448362/d3bda20b-15f2-4f23-b1d9-0a47baed1b3d"/>
+    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/delete_task.png"/>
 &nbsp;
-    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/assets/105448362/2ef2f46c-d5ca-42c0-8dd6-8db9bd3b6d38"/>
+    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/progress_1.png"/>
 </p> 
     
 <p align="center">
-    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/assets/105448362/7420ec7e-ef48-4ca8-9a6a-ae1168bf13d6">
+    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/progress_2.png">
 &nbsp;
-    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/assets/105448362/e6e3c3f8-5dec-4b59-9209-c91955c45f4c">
+    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/register.png">
 </p>
 
 </details>
