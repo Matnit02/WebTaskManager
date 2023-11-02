@@ -6,9 +6,11 @@ from WebTaskManager.models.auth_model import User
 
 auth = Blueprint('auth', __name__)
 
+
 @login_manager.user_loader
 def loader_user(user_id):
     return User.query.get(user_id)
+
 
 @auth.route('/register', methods=('GET', 'POST'))
 def register():
@@ -29,12 +31,10 @@ def register():
             flash('Username is too long', 'warning')
         elif len(password1) > 80:
             flash('Password is too long', 'warning')
-        elif password1 != password2:
-            flash('Passwords vary', 'warning')
-        elif password1 != password2:
-            flash('Passwords vary', 'warning')
         elif len(password1) < 8:
             flash('Password is too short. It needs to be at least 8 characters long', 'warning')
+        elif password1 != password2:
+            flash('Passwords vary', 'warning')
         elif not match(r'^(?=.*[A-Z])(?=.*\d).+$', password1):
             flash('Password has to consist of 1 capital letter and 1 number', 'warning')
         else:
@@ -44,7 +44,6 @@ def register():
             db.session.commit()
             flash('Registration successful!', 'success')
             return redirect(url_for('auth.login'))
-
 
     return render_template('auth/register.html', project_name="TEST PROJECT")
 
@@ -60,7 +59,7 @@ def login():
         remember_me = request.form.get('remember_me')
         user = User.query.filter_by(username=username).first()
         if user and bcrypt.check_password_hash(user.password, password):
-            login_user(user, fresh=True, remember = (remember_me == 'on'))
+            login_user(user, fresh=True, remember=(remember_me == 'on'))
             next_page = request.args.get('next')
             flash('Login successful', 'success')
             return redirect(next_page) if next_page else redirect(url_for('projects.index'))
@@ -68,6 +67,7 @@ def login():
             flash('Please check your username and password', 'danger')
 
     return render_template('auth/login.html')
+
 
 @auth.route('/logout')
 def logout():
