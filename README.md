@@ -34,26 +34,53 @@ python run.py
 ## 👀 Quick Look
 <details open>
   <summary>📸 Take a quick look at some samples</summary>
-
   <p align="center">
-    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/assets/105448362/19360622-7048-4c93-8062-10e4249d61f7"/>
+    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/tasks.png"/>
 &nbsp;
-    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/assets/105448362/de7a58b8-f065-4daf-b655-7f438f724d1c"/>
+    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/new_task.png"/>
 </p>
 
 <p align="center">
-    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/assets/105448362/d3bda20b-15f2-4f23-b1d9-0a47baed1b3d"/>
+    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/delete_task.png"/>
 &nbsp;
-    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/assets/105448362/2ef2f46c-d5ca-42c0-8dd6-8db9bd3b6d38"/>
+    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/progress_1.png"/>
 </p> 
     
 <p align="center">
-    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/assets/105448362/7420ec7e-ef48-4ca8-9a6a-ae1168bf13d6">
+    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/progress_2.png">
 &nbsp;
-    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/assets/105448362/e6e3c3f8-5dec-4b59-9209-c91955c45f4c">
+    <img width="49%" src="https://github.com/Matnit02/WebTaskManager/blob/main/images/register.png">
 </p>
-
 </details>
+
+## 🌟 Features
+
+WebTaskManager offers an array of features tailored to help you manage your tasks and projects. Here's a snapshot of what you can achieve:
+
+### User Authentication
+- **Login**: Securely log into the application.
+- **Register**: Sign up with an email and start your journey.
+
+### Project Management
+- **Independent Projects**: Create multiple projects, each with its own unique set of tasks.
+- **User Collaboration**: 
+  - **Add Users**: Invite other users to collaborate on a project via their email.
+  - **Remove Users**: If needed, you have the ability to delete users from a project.
+  
+### Task Management
+- **Interactive Task View**: A task view with drag-and-drop functionality, making task management fun and easy.
+- **Detailed Task Elements**: Each task comes with:
+  - **Description**: Detailed information about the task.
+  - **Deadline Bar Visualization**: Easily glance at the urgency of a task.
+  - **Subtasks**: Each subtask behaves like a main task, with its own elements.
+- **Task Operations**: 
+  - **Add New Tasks**: Populate your projects with all the tasks you need.
+  - **Delete Tasks**: Remove tasks that are no longer required.
+  
+### Progress Analytics
+- **Task Breakdown Charts**: Understand the structure of your project.
+- **Completion Status**: View the number of tasks you've successfully completed.
+- **Deadline Tracker**: Gain insights on tasks that are on schedule and those lagging behind the deadline.
 
 ## 👏 Acknowledgements
 - [Flask](https://flask.palletsprojects.com/en/3.0.x/): Benefitted from its friendly documentation when starting to learn Flask.
